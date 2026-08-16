@@ -2,7 +2,7 @@
 <html lang="en">
 	<!--begin::Head-->
 	<head><base href="../../../"/>
-		<title>SidePade - Login</title>
+		<title>PWAT Unit Kalbar - Login</title>
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 		<meta charset="utf-8" />
         <meta name="description" content="Sistem Informasi Terpadu Pemadanan Database Ekonomi Kota Mataram">
