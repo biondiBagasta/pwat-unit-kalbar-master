@@ -48,6 +48,45 @@
                     </a>
                     <!--end:Menu link-->
                 </div>
+
+                <div class="menu-item pt-5">
+                    <div class="menu-content">
+                        <span class="menu-heading fw-bold text-uppercase fs-7">Kelola Data User dan Member</span>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <!--begin:Menu link-->
+                    <a class="
+                    {{ request()->route()->named('user.index') ?
+                    'menu-link active' : 'menu-link' }}"
+                    href="{{ route('user.index') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/abstract/abs014.svg-->
+                            <i class="las la-user fs-1 text-light"></i>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">User</span>
+                    </a>
+                    <!--end:Menu link-->
+                </div>
+
+                <div class="menu-item">
+                    <!--begin:Menu link-->
+                    <a class="
+                    {{ request()->route()->named('member.index') ?
+                    'menu-link active' : 'menu-link' }}"
+                    href="{{ route('member.index') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/abstract/abs014.svg-->
+                            <i class="las la-users fs-1 text-light"></i>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Member</span>
+                    </a>
+                    <!--end:Menu link-->
+                </div>
+
             </div>
             <!--end::Menu-->
         </div>
@@ -76,14 +115,14 @@
 <!--end::Sidebar-->
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    // $(document).ready(function() {
 
-        $.get("/admin/rekomendasi/count", function(data) {
-            if(data > 0) {
-                $("#badgeCountRekomendasi").html(data);
+    //     $.get("/admin/rekomendasi/count", function(data) {
+    //         if(data > 0) {
+    //             $("#badgeCountRekomendasi").html(data);
 
-                $("#badgeCountRekomendasi").removeClass("hidden");
-            }
-        });
-    })
+    //             $("#badgeCountRekomendasi").removeClass("hidden");
+    //         }
+    //     });
+    // })
 </script>
