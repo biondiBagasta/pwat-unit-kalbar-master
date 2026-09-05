@@ -67,7 +67,7 @@ Member
                         <span class="input-group-text" id="basic-addon3">
                             <i class="las la-search fs-2"></i>
                         </span>
-                        <input type="text" placeholder="Ketik Username, Role..."
+                        <input type="text" placeholder="Ketik Kata Kunci..."
                         class="form-control" id="search" aria-describedby="basic-addon3" />
                     </div>
                 </div>
@@ -122,6 +122,116 @@ Member
                 <span class="spinner-border text-primary"></span> Proses menghapus data...</div>`,
         });
 
+        // Search Username Logic
+        function debounce(callback, delay = 500) {
+            let timeout;
+
+            return function (...args) {
+                clearTimeout(timeout);
+
+                timeout = setTimeout(() => {
+                    callback.apply(this, args);
+                }, delay);
+            };
+        }
+
+        let isValidUsername = false;
+
+
+        $("#username").on("input", debounce(function() {
+            const username = $(this).val();
+
+            const checkUsernameContainerSuccess = $("#checkUsernameContainerSuccess");
+            const checkUsernameContainerError = $("#checkUsernameContainerError");
+
+            const checkUsernameMessageSuccess = $("#checkUsernameMessageSuccess");
+            const checkUsernameMessageError = $("#checkUsernameMessageError");
+
+            if(username) {
+                const formData = new FormData();
+
+                formData.append("username", username);
+
+                $.ajax({
+                    data: formData,
+                    url: "{{ route('member.check-username') }}",
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if(data.success == true) {
+                            checkUsernameContainerError.addClass("d-none");
+                            checkUsernameContainerSuccess.removeClass("d-none");
+
+                            checkUsernameMessageSuccess.text(data.message);
+
+                            isValidUsername = true;
+                        } else {
+                            checkUsernameContainerError.removeClass("d-none");
+                            checkUsernameContainerSuccess.addClass("d-none");
+
+                            checkUsernameMessageError.text(data.message);
+
+                            isValidUsername = false;
+                        }
+                    },
+                    error: function(data) {
+                        console.log('Error : ', data);
+                    }
+                })
+            }
+
+        }));
+
+        // Load Regency Logic
+        $("#province_id").on("change", function() {
+            const val = $(this).val()
+
+            const regencyElement = $("#regency_id");
+
+            regencyElement.selectpicker('val', '');
+            regencyElement.find('option').remove();
+            regencyElement.selectpicker('destroy');
+
+            // regencyElement.empty();
+            // regencyElement.selectpicker("refresh");
+
+            if(val) {
+                const formData = new FormData();
+
+                formData.append("province_id", val);
+
+                $.ajax({
+                    data: formData,
+                    url: "{{ route('member.find-many-regency') }}",
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        const options = data
+                        .map(function(item) {
+                            return `<option value="${item.id}">${item.name}</option>`;
+                        })
+                        .join("");
+
+                        // Replace semua option lama
+                        regencyElement.html(options);
+
+                        // Reset selected value
+                        regencyElement.selectpicker("val", "");
+
+                        // Refresh bootstrap-select
+                        regencyElement.selectpicker("refresh");
+                    },
+                    error: function(data) {
+                        console.log('Error : ', data);
+                    }
+                })
+            }
+        });
+
         // Search Logic
         const term = @json($term);
 
@@ -147,21 +257,43 @@ Member
         $('#saveBtn').click(function (e) {
             e.preventDefault();
 
+            const full_name = $("#full_name").val();
+            const address = $("#address").val();
+            const phone_number = $("#phone_number").val();
+            const job = $("#job").val();
+            const husband_name = $("#husband_name").val();
+            const husband_occupation = $("#husband_occupation").val();
+            const photo = $("#photo")[0].files[0];
+            const regency_id = $("#regency_id").val();
             const username = $("#username").val();
-            const password = $("#password").val();
-            const user_role_id = $("#user_role_id").val();
+            const member_role_id = $("#member_role_id").val();
+            const member_type_id = $("#member_type_id").val();
 
-            if(username && password && user_role_id) {
+            if(full_name && address && phone_number && job && husband_name &&
+                husband_occupation && regency_id && username && member_role_id
+                && member_type_id
+            ) {
                 blockUI.block();
                 const formData = new FormData();
 
-                formData.append("username", username);
-                formData.append("password", password);
-                formData.append("user_role_id", user_role_id);
+                if(photo) {
+                    formData.append("photo", photo)
+                }
+
+                formData.append("full_name", full_name)
+                formData.append("address", address)
+                formData.append("phone_number", phone_number)
+                formData.append("job", job)
+                formData.append("husband_name", husband_name)
+                formData.append("husband_occupation", husband_occupation)
+                formData.append("regency_id", regency_id)
+                formData.append("username", username)
+                formData.append("member_role_id", member_role_id)
+                formData.append("member_type_id", member_type_id)
 
                 $.ajax({
                     data: formData,
-                    url: "{{ route('user.create') }}",
+                    url: "{{ route('member.create') }}",
                     type: "POST",
                     cache: false,
                     contentType: false,
@@ -194,38 +326,103 @@ Member
         // Edit Update LOGIC
         $('body').on('click', '.edit', function() {
             var id = $(this).data('id');
-            $.get("backoffice/user/edit" + "/" + id, function(data) {
+
+            $.get("backoffice/member/edit" + "/" + id, function(data) {
                 $('#modalTitle').html('Edit Data User');
                 $('#saveBtn').hide();
                 $('#editBtn').show();
                 $('#actionModal').modal('show');
                 $('#id').val(data.id);
-                $("#username").val(data.username);
-                $("#user_role_id").val(data.user_role_id);
+                $("#full_name").val(data.full_name);
+                $("#address").val(data.address);
+                $("#phone_number").val(data.phone_number);
+                $("#job").val(data.job);
+                $("#husband_name").val(data.husband_name);
+                $("#husband_occupation").val(data.husband_occupation);
+                $("#username").val(data.user.username);
+                $("#member_role_id").val(data.member_role_id);
+                $("#member_type_id").val(data.member_type_id);
+
+                // Update SelectPicker Logic
+                const formData = new FormData();
+
+                formData.append("province_id", data.regency.province_id);
+
+                const provinceElement = $("#province_id");
+                const regencyElement = $("#regency_id");
+
+                $.ajax({
+                    data: formData,
+                    url: "{{ route('member.find-many-regency') }}",
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data2) {
+                        const options = data2
+                        .map(function(item) {
+                            return `<option value="${item.id}">${item.name}</option>`;
+                        })
+                        .join("");
+
+                        // Replace semua option lama
+                        regencyElement.html(options);
+
+                        // Reset selected value
+                        regencyElement.selectpicker("val", data.regency_id);
+                        provinceElement.selectpicker("val", data.regency.province_id);
+
+                        // Refresh bootstrap-select
+                        provinceElement.selectpicker("refresh");
+                        regencyElement.selectpicker("refresh");
+                    },
+                    error: function(data) {
+                        console.log('Error : ', data2);
+                    }
+                })
             })
         });
 
         $('#editBtn').click(function (e) {
             e.preventDefault();
 
+            const full_name = $("#full_name").val();
+            const address = $("#address").val();
+            const phone_number = $("#phone_number").val();
+            const job = $("#job").val();
+            const husband_name = $("#husband_name").val();
+            const husband_occupation = $("#husband_occupation").val();
+            const photo = $("#photo")[0].files[0];
+            const regency_id = $("#regency_id").val();
             const username = $("#username").val();
-            const user_role_id = $("#user_role_id").val();
-            const password = $("#password").val();
+            const member_role_id = $("#member_role_id").val();
+            const member_type_id = $("#member_type_id").val();
 
-            if(username && user_role_id) {
+            if(full_name && address && phone_number && job && husband_name &&
+                husband_occupation && regency_id && username && member_role_id
+                && member_type_id
+            ) {
                 var id = $('#id').val();
 
-                var url = "{{ route('user.update', ":id") }}";
+                var url = "{{ route('member.update', ":id") }}";
                 url = url.replace(':id', id);
 
                 const formData = new FormData();
 
-                formData.append("user_role_id", user_role_id);
-                formData.append("username", username);
-
-                if(password) {
-                    formData.append("password", password)
+                if(photo) {
+                    formData.append("photo", photo)
                 }
+
+                formData.append("full_name", full_name)
+                formData.append("address", address)
+                formData.append("phone_number", phone_number)
+                formData.append("job", job)
+                formData.append("husband_name", husband_name)
+                formData.append("husband_occupation", husband_occupation)
+                formData.append("regency_id", regency_id)
+                formData.append("username", username)
+                formData.append("member_role_id", member_role_id)
+                formData.append("member_type_id", member_type_id)
 
 
                 formData.append('_method', 'PUT');
@@ -262,12 +459,12 @@ Member
         $('body').on('click', '.delete', function() {
             var id = $(this).data('id');
 
-            var url = "{{ route('user.delete', ":id") }}";
+            var url = "{{ route('member.delete', ":id") }}";
             url = url.replace(':id', id);
 
             Swal.fire({
-                title: 'Delete Data User',
-                text: "Apakah anda yakin ingin menghapus data User ini???",
+                title: 'Delete Data Member',
+                text: "Apakah anda yakin ingin menghapus data Member ini???",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -276,7 +473,6 @@ Member
             }).then((result) => {
 
                 if(result.value) {
-                    blockUI.block();
                     $.ajax({
                         type: "DELETE",
                         url: url,
@@ -284,7 +480,6 @@ Member
                             if(data.success == true) {
                                 location.reload();
                             } else {
-                                blockUI.release();
                                 toastr.error(data.message);
                             }
                         },

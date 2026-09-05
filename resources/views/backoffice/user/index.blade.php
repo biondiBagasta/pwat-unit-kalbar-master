@@ -59,7 +59,7 @@ User
                                 <span class="input-group-text" id="basic-addon3">
                                     <i class="las la-search fs-2"></i>
                                 </span>
-                                <input type="text" placeholder="Ketik Username, Role..."
+                                <input type="text" placeholder="Ketik Kata Kunci..."
                                 class="form-control" id="search" aria-describedby="basic-addon3" />
                             </div>
                         </div>
@@ -273,7 +273,6 @@ User
             }).then((result) => {
 
                 if(result.value) {
-                    blockUI.block();
                     $.ajax({
                         type: "DELETE",
                         url: url,
@@ -281,7 +280,6 @@ User
                             if(data.success == true) {
                                 location.reload();
                             } else {
-                                blockUI.release();
                                 toastr.error(data.message);
                             }
                         },

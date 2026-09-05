@@ -20,7 +20,7 @@
                         <label for="code" class="control-label col-form-label">Kode</label>
                         <div class="input-group mb-5">
                             <span class="input-group-text" id="basic-addon3">
-                                <i class="las la-users fs-2"></i>
+                                <i class="las la-code fs-2"></i>
                             </span>
                             <input type="text"
                             class="form-control" id="code"
@@ -32,7 +32,7 @@
                         <label for="name" class="control-label col-form-label">Name</label>
                         <div class="input-group mb-5">
                             <span class="input-group-text" id="basic-addon3">
-                                <i class="las la-users fs-2"></i>
+                                <i class="las la-bookmark fs-2"></i>
                             </span>
                             <input type="text"
                             class="form-control" id="name"

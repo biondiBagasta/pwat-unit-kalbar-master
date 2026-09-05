@@ -2,9 +2,13 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\backoffice\DashboardController;
+use App\Http\Controllers\backoffice\EventCategoryController;
+use App\Http\Controllers\backoffice\EventController;
 use App\Http\Controllers\backoffice\MemberController;
 use App\Http\Controllers\backoffice\MemberRoleController;
 use App\Http\Controllers\backoffice\MemberTypeController;
+use App\Http\Controllers\backoffice\SuggestionCategoryController;
+use App\Http\Controllers\backoffice\SuggestionController;
 use App\Http\Controllers\backoffice\UserController;
 use App\Http\Controllers\backoffice\UserRoleController;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +62,12 @@ Route::group(["prefix" => "backoffice"], function() {
 
     // Member Route
     Route::get("member", [MemberController::class, "index"])->name("member.index");
+    Route::post("member/create", [MemberController::class, "create"])->name("member.create");
+    Route::get("member/edit/{id}", [MemberController::class, "edit"])->name("member.edit");
+    Route::put("member/update/{id}", [MemberController::class, "update"])->name("member.update");
+    Route::delete("member/delete/{id}", [MemberController::class, "delete"])->name("member.delete");
+    Route::post("member/check-username", [MemberController::class, "checkUsername"])->name("member.check-username");
+    Route::post("member/find-many-regency", [MemberController::class, "findManyRegency"])->name("member.find-many-regency");
 
     // Member Role Route
     Route::post("member-role/create", [MemberRoleController::class, "create"])->name("member-role.create");
@@ -70,4 +80,30 @@ Route::group(["prefix" => "backoffice"], function() {
     Route::get("member-type/edit/{id}", [MemberTypeController::class, "edit"])->name("member-type.edit");
     Route::put("member-type/update/{id}", [MemberTypeController::class, "update"])->name("member-type.update");
     Route::delete("member-type/delete/{id}", [MemberTypeController::class, "delete"])->name("member-type.delete");
+
+    // Suggestion Category Route
+    Route::post("suggestion-category/create", [SuggestionCategoryController::class, "create"])->name("suggestion-category.create");
+    Route::get("suggestion-category/edit/{id}", [SuggestionCategoryController::class, "edit"])->name("suggestion-category.edit");
+    Route::put("suggestion-category/update/{id}", [SuggestionCategoryController::class, "update"])->name("suggestion-category.update");
+    Route::delete("suggestion-category/delete/{id}", [SuggestionCategoryController::class, "delete"])->name("suggestion-category.delete");
+
+    // Suggestion Route
+    Route::get("suggestion", [SuggestionController::class, "index"])->name("suggestion.index");
+    Route::post("suggestion/create", [SuggestionController::class, "create"])->name("suggestion.create");
+    Route::put("suggestion/update/{id}", [SuggestionController::class, "update"])->name("suggestion.update");
+    Route::get("suggestion/edit/{id}", [SuggestionController::class, "edit"])->name("suggestion.edit");
+    Route::delete("suggestion/delete/{id}", [SuggestionController::class, "delete"])->name("suggestion.delete");
+
+    // Event Category Route
+    Route::post("event-category/create", [EventCategoryController::class, "create"])->name("event-category.create");
+    Route::get("event-category/edit/{id}", [EventCategoryController::class, "edit"])->name("event-category.edit");
+    Route::put("event-category/update/{id}", [EventCategoryController::class, "update"])->name("event-category.update");
+    Route::delete("event-category/delete/{id}", [EventCategoryController::class, "delete"])->name("event-category.delete");
+
+    // Event Route
+    Route::get("event", [EventController::class, "index"])->name("event.index");
+    Route::post("event/create", [EventController::class, "create"])->name("event.create");
+    Route::put("event/update/{id}", [EventController::class, "update"])->name("event.update");
+    Route::get("event/edit/{id}", [EventController::class, "edit"])->name("event.edit");
+    Route::delete("event/delete/{id}", [EventController::class, "delete"])->name("event.delete");
 });

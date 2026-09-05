@@ -24,7 +24,7 @@
                             </span>
                             <input type="text"
                             class="form-control" id="username"
-                            name="code" aria-describedby="basic-addon3" />
+                            name="username" aria-describedby="basic-addon3" />
                         </div>
                     </div>
 

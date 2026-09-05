@@ -20,7 +20,7 @@ class UserController extends Controller
 
         $currentPage = (int) ($request->query("page") ?? 1);
 
-        $count = User::with("user_role")->where([
+        $count = User::where([
             ["username", "like", "%" . $term . "%"],
         ])->count();
 
@@ -85,7 +85,7 @@ class UserController extends Controller
 
             $model->save();
 
-            session()->flash("update", "Data User dengan Username {$request['name']} Berhasil Diupdate.");
+            session()->flash("update", "Data User dengan Username {$request['username']} Berhasil Diupdate.");
 
             return ApiResponse::successResponse("");
         } catch(\Throwable $e) {
@@ -103,7 +103,7 @@ class UserController extends Controller
             } else {
                 $model->delete();
 
-                session()->flash("delete", "Data User dengan Username {$model->name} Berhasil Dihapus.");
+                session()->flash("delete", "Data User dengan Username {$model->username} Berhasil Dihapus.");
 
                 return ApiResponse::successResponse("");
             }

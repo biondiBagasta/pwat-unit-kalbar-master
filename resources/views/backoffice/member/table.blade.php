@@ -19,7 +19,7 @@
         <tbody id="tbodyContainer">
             @foreach ($data as $d)
                 <tr>
-                    <td>
+                    <td style="width: 120px">
                         @if($d->photo != null)
                         <a class="d-block overlay" data-fslightbox="lightbox-basic" href="{{ url('/storage/members/' . $d->photo ) }}">
                             <!--begin::Image-->
@@ -59,6 +59,8 @@
                     <td>{{ $d->job }}</td>
                     <td>{{ $d->husband_name }}</td>
                     <td>{{ $d->husband_occupation }}</td>
+                    <td>{{ $d->member_type->name }}</td>
+                    <td>{{ $d->member_role->name }}</td>
                     <td>
                         @if($d->status == 1)
                         <span class="badge badge-light-success">Aktif</span>
@@ -67,20 +69,22 @@
                         @endif
                     </td>
                     <td>
-                        <button data-toggle="tooltip" data-id="{{ $d->id }}"
-                        title="Edit" class="profile btn btn-icon btn-dark btn-sm me-1">
-                            <i class="las la-user-circle fs-4"></i>
-                        </button>
+                        <div class="d-flex flex-column gap-2">
+                            <button data-toggle="tooltip" data-id="{{ $d->id }}"
+                            title="Profile" class="profile btn btn-icon btn-dark btn-sm me-1">
+                                <i class="las la-user-circle fs-4"></i>
+                            </button>
 
-                        <button data-toggle="tooltip" data-id="{{ $d->id }}"
-                        title="Edit" class="edit btn btn-icon btn-info btn-sm me-1">
-                            <i class="las la-edit fs-4"></i>
-                        </button>
+                            <button data-toggle="tooltip" data-id="{{ $d->id }}"
+                            title="Edit" class="edit btn btn-icon btn-info btn-sm me-1">
+                                <i class="las la-edit fs-4"></i>
+                            </button>
 
-                        <button data-toggle="tooltip"  data-id="{{ $d->id }}"
-                        title="Delete" class="btn btn-icon btn-danger btn-sm delete">
-                            <i class="las la-trash fs-4"></i>
-                        </button>
+                            <button data-toggle="tooltip"  data-id="{{ $d->id }}"
+                            title="Delete" class="btn btn-icon btn-danger btn-sm delete">
+                                <i class="las la-trash fs-4"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             @endforeach

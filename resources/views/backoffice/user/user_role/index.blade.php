@@ -186,7 +186,6 @@
             }).then((result) => {
 
                 if(result.value) {
-                    blockUI.block();
                     $.ajax({
                         type: "DELETE",
                         url: url,
@@ -194,7 +193,6 @@
                             if(data.success == true) {
                                 location.reload();
                             } else {
-                                blockUI.release();
                                 toastr.error(data.message);
                             }
                         },

@@ -27,6 +27,10 @@
                 border: none !important;
             }
 
+            /* #dataTable {
+                min-width: 1200px;
+            } */
+
             #toast-container > div {
                 opacity: 1 !important;
                 font-size: 1rem;

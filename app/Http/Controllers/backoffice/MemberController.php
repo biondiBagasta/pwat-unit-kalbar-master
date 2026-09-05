@@ -9,6 +9,8 @@ use App\Models\MemberRoles;
 use App\Models\Members;
 use App\Models\MemberTypes;
 use App\Models\Provinces;
+use App\Models\Regencies;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class MemberController extends Controller
@@ -30,6 +32,7 @@ class MemberController extends Controller
         function ($q) use($term) {
             $q->where("full_name", "like", "%{$term}%")
             ->orWhere("husband_name", "like", "%{$term}%")
+            ->orWhere("husband_occupation", "like", "%{$term}%")
             ->orWhereHas("member_role", function ($q2) use($term) {
                 $q2->where("name", "like", "%{$term}%");
             })->orWhereHas("member_type", function ($q2) use($term) {
@@ -67,6 +70,7 @@ class MemberController extends Controller
     public function create(MemberRequest $request) {
         try {
             $model = new Members;
+            $userData = User::where("username", "=", $request["username"])->first();
 
             $model->full_name = $request["full_name"];
             $model->address = $request["address"];
@@ -75,7 +79,7 @@ class MemberController extends Controller
             $model->husband_name = $request["husband_name"];
             $model->husband_occupation = $request["husband_occupation"];
             $model->regency_id = $request["regency_id"];
-            $model->username = $request["username"];
+            $model->user_id = $userData->id;
 
             $model->member_role_id = $request["member_role_id"];
             $model->member_type_id = $request["member_type_id"];
@@ -98,7 +102,7 @@ class MemberController extends Controller
     }
 
     public function edit($id) {
-        $data = Members::find($id);
+        $data = Members::with("member_role", "member_type", "user", "regency.province")->find($id);
 
         return response()->json($data);
     }
@@ -107,6 +111,8 @@ class MemberController extends Controller
         try {
             $model = Members::find($id);
 
+            $userData = User::where("username", "=", $request["username"])->first();
+
             $model->full_name = $request["full_name"];
             $model->address = $request["address"];
             $model->phone_number = $request["phone_number"];
@@ -114,7 +120,7 @@ class MemberController extends Controller
             $model->husband_name = $request["husband_name"];
             $model->husband_occupation = $request["husband_occupation"];
             $model->regency_id = $request["regency_id"];
-            $model->username = $request["username"];
+            $model->user_id = $userData->id;
 
             $model->member_role_id = $request["member_role_id"];
             $model->member_type_id = $request["member_type_id"];
@@ -124,6 +130,8 @@ class MemberController extends Controller
                 $request["photo"]->storeAs("members", $filename, 'public');
                 $model->photo = $filename;
             }
+
+            $model->save();
 
 
             session()->flash("update", "Data Member {$request['name']} Berhasil Diupdate.");
@@ -138,6 +146,14 @@ class MemberController extends Controller
         try {
             $model = Members::find($id);
 
+            if($model->photo != null) {
+                $path = "app/public/members/". $model->photo;
+
+                if(file_exists(storage_path($path))) {
+                    unlink(storage_path($path));
+                }
+            }
+
             $model->delete();
 
             session()->flash("delete", "Data Member {$model->name} Berhasil Dihapus.");
@@ -146,5 +162,31 @@ class MemberController extends Controller
         } catch(\Throwable $e) {
             return ApiResponse::errorResponse("Gagal Menghapus Data Member : {$e->getMessage()}");
         }
+    }
+
+    public function checkUsername(Request $request) {
+        $username = $request["username"];
+
+        $dataUser = User::where("username", "=", $username)->first();
+
+        if($dataUser == null) {
+            return ApiResponse::errorResponse("Username belum terdaftar, silahkan buat user dengan username '{$username}' pada menu User.");
+        } else {
+            $countData = Members::where("user_id", "=", $dataUser->id)->count();
+
+            if($countData == 0) {
+                return ApiResponse::successResponse("Username tersedia.");
+            } else {
+                return ApiResponse::errorResponse("Username sudah digunakan!!!");
+            }
+        }
+    }
+
+    public function findManyRegency(Request $request) {
+        $province_id = $request["province_id"];
+
+        $data = Regencies::where("province_id", "=", $province_id)->get();
+
+        return response()->json($data);
     }
 }
