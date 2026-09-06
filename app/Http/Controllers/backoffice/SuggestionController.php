@@ -72,7 +72,7 @@ class SuggestionController extends Controller
     }
 
     public function edit($id) {
-        $data = Suggestions::find($id);
+        $data = Suggestions::with("member")->find($id);
 
         return response()->json($data);
     }

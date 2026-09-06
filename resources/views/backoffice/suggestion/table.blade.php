@@ -15,8 +15,16 @@
                     <td>
                         {{ $d->member->full_name }}
                     </td>
-                    <td>{{ $d->member->title }}</td>
-                    <td>{!! $d->content !!}</td>
+                    <td>{{ $d->title }}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-light-primary detail-content"
+                        data-id="{{ $d->id }}">
+                            <div class="d-flex flex-row gap-2">
+                                <i class="las la-eye fs-2"></i>
+                                <div>Lihat Isi</div>
+                            </div>
+                        </button>
+                    </td>
                     <td>{{ \Carbon\Carbon::parse($d->created_at)->format('d F Y') }}</td>
                     <td>
                         <button data-toggle="tooltip"  data-id="{{ $d->id }}"

@@ -22,12 +22,10 @@
                             title="Edit" class="child-edit btn btn-icon btn-info btn-sm me-1">
                                 <i class="las la-edit fs-4"></i>
                             </button>
-                            @if($d->id != 9)
                             <button data-toggle="tooltip"  data-id="{{ $d->id }}"
                             title="Delete" class="btn btn-icon btn-danger btn-sm child-delete">
                                 <i class="las la-trash fs-4"></i>
                             </button>
-                            @endif
                         </div>
                     </td>
                 </tr>

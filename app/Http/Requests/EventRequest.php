@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EventRequest extends FormRequest
@@ -27,9 +26,7 @@ class EventRequest extends FormRequest
             "content" => "required",
             "event_category_id" => "required",
             "start_date" => "required",
-            "end_date" => "required",
-            "start_time" => "required",
-            "end_time" => "required"
+            "end_date" => "required"
         ];
     }
 }

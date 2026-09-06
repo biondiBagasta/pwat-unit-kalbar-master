@@ -63,9 +63,6 @@ class EventController extends Controller
             $model->event_category_id = $request["event_category_id"];
             $model->start_date = $request["start_date"];
             $model->end_date = $request["end_date"];
-            $model->start_time = $request["start_time"];
-            $model->end_time = $request["end_time"];
-
             $model->save();
 
             session()->flash("create", "Data Event {$request['name']} Berhasil Ditambahkan.");
@@ -92,8 +89,6 @@ class EventController extends Controller
             $model->event_category_id = $request["event_category_id"];
             $model->start_date = $request["start_date"];
             $model->end_date = $request["end_date"];
-            $model->start_time = $request["start_time"];
-            $model->end_time = $request["end_time"];
 
             $model->save();
 

@@ -41,7 +41,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="jenis_pelatihan_id" class="control-label col-form-label">Role</label>
+                        <label for="user_role_id" class="control-label col-form-label">Role</label>
                         <div class="input-group mb-5">
                             <span class="input-group-text" id="basic-addon3">
                                 <i class="las la-tags fs-2"></i>

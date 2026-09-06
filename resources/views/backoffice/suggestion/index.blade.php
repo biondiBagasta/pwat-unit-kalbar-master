@@ -77,6 +77,8 @@ Saran
     </div>
 </div>
 
+@include("backoffice.suggestion.content_detail")
+
 @endsection
 
 @section("script")
@@ -165,6 +167,17 @@ Saran
                 }
             });
         });
+
+        $("body").on("click", ".detail-content", function() {
+            var id = $(this).data("id")
+
+            $.get("backoffice/suggestion/edit" + "/" + id, function(data) {
+                console.log(data)
+                $('#detailContentModalTitle').html(`Isi Saran ${data.title} oleh ${data.member.full_name}`);
+                $("#detailContentBody").html(data.content)
+                $('#detailContentModal').modal('show');
+            })
+        })
     });
 </script>
 @endsection

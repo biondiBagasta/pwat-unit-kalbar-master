@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $event_category_id
  * @property \Carbon\Carbon $start_date
  * @property \Carbon\Carbon $end_date
- * @property string $start_time
- * @property string $end_time
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
