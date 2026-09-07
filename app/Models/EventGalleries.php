@@ -17,6 +17,6 @@ class EventGalleries extends Model
     protected $guarded = [];
 
     public function event() {
-        return $this->belongsTo(Events::class);
+        return $this->belongsTo(Events::class, "event_id");
     }
 }

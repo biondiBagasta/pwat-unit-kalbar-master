@@ -21,7 +21,7 @@ class Events extends Model
     protected $guarded = [];
 
     public function event_galleries() {
-        return $this->hasMany(EventGalleries::class);
+        return $this->hasMany(EventGalleries::class, "event_id");
     }
 
     public function event_category() {

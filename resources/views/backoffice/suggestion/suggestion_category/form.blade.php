@@ -23,8 +23,8 @@
                                 <i class="las la-code fs-2"></i>
                             </span>
                             <input type="text"
-                            class="form-control" id="code"
-                            name="code" aria-describedby="basic-addon3" />
+                            class="form-control" id="code_2"
+                            name="code_2" aria-describedby="basic-addon3" />
                         </div>
                     </div>
 
@@ -35,8 +35,8 @@
                                 <i class="las la-bookmark fs-2"></i>
                             </span>
                             <input type="text"
-                            class="form-control" id="name"
-                            name="name" aria-describedby="basic-addon3" />
+                            class="form-control" id="name_2"
+                            name="name_2" aria-describedby="basic-addon3" />
                         </div>
                     </div>
                 </form>

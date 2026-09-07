@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $amount
  * @property int $current_balance
  * @property int $finance_category_id
+ * @property string $notes
+ * @property \Carbon\Carbon $finance_date
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */

@@ -17,14 +17,16 @@
                     <td>{{ $d->username }}</td>
                     <td>{{ $d->user_role->name }}</td>
                     <td>
-                        <button data-toggle="tooltip" data-id="{{ $d->id }}"
-                        title="Edit" class="edit btn btn-icon btn-info btn-sm me-1">
-                            <i class="las la-edit fs-4"></i>
-                        </button>
-                        <button data-toggle="tooltip"  data-id="{{ $d->id }}"
-                        title="Delete" class="btn btn-icon btn-danger btn-sm delete">
-                            <i class="las la-trash fs-4"></i>
-                        </button>
+                        <div class="d-flex flex-column flex-md-row gap-2">
+                            <button data-toggle="tooltip" data-id="{{ $d->id }}"
+                            title="Edit" class="edit btn btn-icon btn-info btn-sm me-1">
+                                <i class="las la-edit fs-4"></i>
+                            </button>
+                            <button data-toggle="tooltip"  data-id="{{ $d->id }}"
+                            title="Delete" class="btn btn-icon btn-danger btn-sm delete">
+                                <i class="las la-trash fs-4"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             @endforeach

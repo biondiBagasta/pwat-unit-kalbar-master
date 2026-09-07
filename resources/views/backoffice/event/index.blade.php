@@ -73,7 +73,7 @@ Event
     </div>
 
     <div class="col-12 col-md-4">
-        @include("backoffice.event.event_category.table")
+        @include("backoffice.event.event_category.index")
     </div>
 </div>
 
@@ -90,13 +90,12 @@ Event
         });
 
         // Flatpickr Logic
-        var startDate = null;
-        var endDate = null;
+        var start_date = null;
+        var end_date = null;
 
         // Deklarasi Flatpickr
         $("#event_date").flatpickr({
             mode: "range",
-            defaultDate: "today",
             altInput: true,
             altFormat: "j F, Y",
             dateFormat: "Y-m-d",
@@ -109,8 +108,8 @@ Event
                     let start = instance.formatDate(startDate, "Y-m-d");
                     let end   = instance.formatDate(endDate, "Y-m-d");
 
-                    startDate = start;
-                    endDate = end;
+                    start_date = start;
+                    end_date = end;
                 }
             }
         });
@@ -189,11 +188,9 @@ Event
             const name = $("#name").val();
             const content = contentQuill.root.innerHTML;
             const event_category_id = $("#event_category_id").val();
-            const startDate = startDate;
-            const endDate = endDate;
 
-            if(name && content && event_category_id && startDate
-                && endDate
+            if(name && content && event_category_id && start_date
+                && end_date
             ) {
                 blockUI.block();
                 const formData = new FormData();
@@ -201,8 +198,8 @@ Event
                 formData.append("name", name);
                 formData.append("content", content);
                 formData.append("event_category_id", event_category_id);
-                formData.append("start_date", startDate)
-                formData.append("end_date", endDate)
+                formData.append("start_date", start_date)
+                formData.append("end_date", end_date)
 
                 $.ajax({
                     data: formData,
@@ -253,6 +250,9 @@ Event
                     data.start_date,
                     data.end_date
                 ]);
+
+                start_date = data.start_date
+                end_date = data.end_date
             })
         });
 
@@ -262,11 +262,9 @@ Event
             const name = $("#name").val();
             const content = contentQuill.root.innerHTML;
             const event_category_id = $("#event_category_id").val();
-            const startDate = startDate;
-            const endDate = endDate;
 
-            if(name && content && event_category_id && startDate
-                && endDate
+            if(name && content && event_category_id && start_date
+                && end_date
             ) {
                 var id = $('#id').val();
 
@@ -278,8 +276,8 @@ Event
                 formData.append("name", name);
                 formData.append("content", content);
                 formData.append("event_category_id", event_category_id);
-                formData.append("start_date", startDate)
-                formData.append("end_date", endDate)
+                formData.append("start_date", start_date)
+                formData.append("end_date", end_date)
 
 
                 formData.append('_method', 'PUT');

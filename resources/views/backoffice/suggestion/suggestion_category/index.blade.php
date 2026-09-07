@@ -65,15 +65,15 @@
         $('#childSaveBtn').click(function (e) {
             e.preventDefault();
 
-            const code = $("#code").val();
-            const name = $("#name").val();
+            const code = $("#code_2").val();
+            const name = $("#name_2").val();
 
             if(code && name) {
                 blockUI.block();
                 const formData = new FormData();
 
-                formData.append("code", code);
-                formData.append("name", name);
+                formData.append("code_2", code);
+                formData.append("name_2", name);
 
                 $.ajax({
                     data: formData,
@@ -116,16 +116,16 @@
                 $('#childEditBtn').show();
                 $('#childActionModal').modal('show');
                 $('#id').val(data.id);
-                $("#name").val(data.name);
-                $("#code").val(data.code);
+                $("#name_2").val(data.name);
+                $("#code_2").val(data.code);
             })
         });
 
         $('#childEditBtn').click(function (e) {
             e.preventDefault();
 
-            const code = $("#code").val();
-            const name = $("#name").val();
+            const code = $("#code_2").val();
+            const name = $("#name_2").val();
 
             if(code && name) {
                 var id = $('#id').val();

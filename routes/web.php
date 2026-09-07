@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\backoffice\DashboardController;
 use App\Http\Controllers\backoffice\EventCategoryController;
 use App\Http\Controllers\backoffice\EventController;
+use App\Http\Controllers\backoffice\FinanceCategoryController;
+use App\Http\Controllers\backoffice\FinanceController;
 use App\Http\Controllers\backoffice\MemberController;
 use App\Http\Controllers\backoffice\MemberRoleController;
 use App\Http\Controllers\backoffice\MemberTypeController;
@@ -106,4 +108,17 @@ Route::group(["prefix" => "backoffice"], function() {
     Route::put("event/update/{id}", [EventController::class, "update"])->name("event.update");
     Route::get("event/edit/{id}", [EventController::class, "edit"])->name("event.edit");
     Route::delete("event/delete/{id}", [EventController::class, "delete"])->name("event.delete");
+
+    // Finance Category Route
+    Route::post("finance-category/create", [FinanceCategoryController::class, "create"])->name("finance-category.create");
+    Route::get("finance-category/edit/{id}", [FinanceCategoryController::class, "edit"])->name("finance-category.edit");
+    Route::put("finance-category/update/{id}", [FinanceCategoryController::class, "update"])->name("finance-category.update");
+    Route::delete("finance-category/delete/{id}", [FinanceCategoryController::class, "delete"])->name("finance-category.delete");
+
+    // Finance Route
+    Route::get("finance", [FinanceController::class, "index"])->name("finance.index");
+    Route::post("finance/create", [FinanceController::class, "create"])->name("finance.create");
+    Route::put("finance/update/{id}", [FinanceController::class, "update"])->name("finance.update");
+    Route::get("finance/edit/{id}", [FinanceController::class, "edit"])->name("finance.edit");
+    Route::delete("finance/delete/{id}", [FinanceController::class, "delete"])->name("finance.delete");
 });

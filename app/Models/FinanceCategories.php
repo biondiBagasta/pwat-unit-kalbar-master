@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $code
  * @property string $name
+ * @property int $type
  */
 
 class FinanceCategories extends Model

@@ -65,8 +65,8 @@
         $('#child2SaveBtn').click(function (e) {
             e.preventDefault();
 
-            const code = $("#code_2").val();
-            const name = $("#name_2").val();
+            const code = $("#code_3").val();
+            const name = $("#name_3").val();
 
             if(code && name) {
                 blockUI.block();
@@ -116,16 +116,16 @@
                 $('#child2EditBtn').show();
                 $('#child2ActionModal').modal('show');
                 $('#id').val(data.id);
-                $("#name_2").val(data.name);
-                $("#code_2").val(data.code);
+                $("#name_3").val(data.name);
+                $("#code_3").val(data.code);
             })
         });
 
         $('#child2EditBtn').click(function (e) {
             e.preventDefault();
 
-            const code = $("#code_2").val();
-            const name = $("#name_2").val();
+            const code = $("#code_3").val();
+            const name = $("#name_3").val();
 
             if(code && name) {
                 var id = $('#id').val();

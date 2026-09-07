@@ -144,7 +144,7 @@
 
 
                             <div class="form-group">
-                                <label for="full_name" class="control-label col-form-label">Alamat Lengkap</label>
+                                <label for="address" class="control-label col-form-label">Alamat Lengkap</label>
                                 <div class="input-group mb-5">
                                     <textarea class="form-control" name="address" id="address" rows="3"></textarea>
                                 </div>
