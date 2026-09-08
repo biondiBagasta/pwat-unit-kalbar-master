@@ -42,4 +42,8 @@ class Members extends Model
     public function regency() {
         return $this->belongsTo(Regencies::class, "regency_id");
     }
+
+    public function posts() {
+        return $this->hasMany(Posts::class, "posted_by");
+    }
 }

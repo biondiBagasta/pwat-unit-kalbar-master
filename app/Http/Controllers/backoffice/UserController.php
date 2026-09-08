@@ -24,7 +24,7 @@ class UserController extends Controller
             ["username", "like", "%" . $term . "%"],
         ])->count();
 
-        $totalPage =  round(($count / $pageTake) + 0.4);
+        $totalPage = ceil(($count / $pageTake) + 0.4);
 
         $data = User::with("user_role")->where([
             ["username", "like", "%" . $term . "%"],

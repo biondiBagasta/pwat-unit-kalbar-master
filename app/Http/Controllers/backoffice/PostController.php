@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\backoffice;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PostRequest;
+use App\Models\PostCategories;
 use App\Models\Posts;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -19,6 +23,7 @@ class PostController extends Controller
         $count = Posts::where(
         function ($q) use($term) {
             $q->where("title", "like", "%{$term}%")
+            ->orWhere("hastag", "like", "%{$term}%")
             ->orWhereHas("post_category", function ($q2) use($term) {
                 $q2->where("name", "like", "%{$term}%");
             })->orWhereHas("posted_by", function ($q2) use($term) {
@@ -26,19 +31,26 @@ class PostController extends Controller
             });
         })->count();
 
-        $totalPage =  round(($count / $pageTake) + 0.4);
+        $totalPage = ceil(($count / $pageTake) + 0.4);
 
-        $data = User::with("user_role")->where([
-            ["username", "like", "%" . $term . "%"],
-        ])->get();
+        $data = Posts::with("post_category", "member")->where(
+        function ($q) use($term) {
+            $q->where("title", "like", "%{$term}%")
+            ->orWhere("hastag", "like", "%{$term}%")
+            ->orWhereHas("post_category", function ($q2) use($term) {
+                $q2->where("name", "like", "%{$term}%");
+            })->orWhereHas("posted_by", function ($q2) use($term) {
+                $q2->where("full_name", "like", "%{$term}%");
+            });
+        })->get();
 
         // Bagian Data User Roles
-        $user_roles_data = UserRoles::orderBy("name", "asc")->get();
+        $post_categories_data = PostCategories::orderBy("name", "asc")->get();
 
-        return view("backoffice.user.index",
+        return view("backoffice.post.index",
         [
             "data" => $data,
-            "user_roles_data" => $user_roles_data,
+            "post_categories_data" => $post_categories_data,
             "current_page" => $currentPage,
             "count" => $count,
             "total_page" => $totalPage,
@@ -46,71 +58,66 @@ class PostController extends Controller
         ]);
     }
 
-    public function create(UserRequest $request) {
+    public function create(PostRequest $request) {
         try {
-            $model = new User;
+            $model = new Posts;
 
-            $model->username = $request["username"];
-            $model->password = Hash::make($request["password"]);
-            $model->user_role_id = $request["user_role_id"];
+            $model->title = $request["title"];
+            $model->content = $request["content"];
+            $model->hastag = $request["hastag"];
+            $model->post_category_id = $request["post_category_id"];
+            $model->post_status_id = 1;
+            $model->posted_by = Auth::user()->member->id;
 
             $model->save();
 
-            session()->flash("create", "Data User dengan Username {$request['username']} Berhasil Ditambahkan.");
+            session()->flash("create", "Data Post Berhasil Ditambahkan.");
 
             return ApiResponse::successResponse("");
         } catch(\Throwable $e) {
-            return ApiResponse::errorResponse("Gagal Membuat Data User : {$e->getMessage()}");
+            return ApiResponse::errorResponse("Gagal Membuat Data Post : {$e->getMessage()}");
         }
     }
 
     public function edit($id) {
-        $data = User::find($id);
+        $data = Posts::with("post_category", "member")->find($id);
 
         return response()->json($data);
     }
 
-    public function update(UserRequest $request, $id) {
+    public function update(PostRequest $request, $id) {
 
         try {
-            $model = User::find($id);
+            $model = Posts::find($id);
 
-            $model->username = $request["username"];
-
-            if($request["password"]) {
-                $model->password = Hash::make($request["password"]);
-            } else {
-                $model->password = $model->password;
-            }
-
-            $model->user_role_id = $request["user_role_id"];
+            $model->title = $request["title"];
+            $model->content = $request["content"];
+            $model->hastag = $request["hastag"];
+            $model->post_category_id = $request["post_category_id"];
+            $model->post_status_id = 1;
+            $model->posted_by = Auth::user()->member->id;
 
             $model->save();
 
-            session()->flash("update", "Data User dengan Username {$request['username']} Berhasil Diupdate.");
+            session()->flash("update", "Data Post Berhasil Diupdate.");
 
             return ApiResponse::successResponse("");
         } catch(\Throwable $e) {
-            return ApiResponse::errorResponse("Gagal Mengupdate Data User : {$e->getMessage()}");
+            return ApiResponse::errorResponse("Gagal Mengupdate Data Post : {$e->getMessage()}");
         }
     }
 
     public function delete($id) {
         try {
-            $model = User::find($id);
+            $model = Posts::find($id);
 
-            if($model->member()->exists()) {
+            $model->delete();
 
-                return ApiResponse::errorResponse("Data User ini Sudah Memiliki Data Member, Sehingga tidak bisa Dihapus.");
-            } else {
-                $model->delete();
+            session()->flash("delete", "Data Post Berhasil Dihapus.");
 
-                session()->flash("delete", "Data User dengan Username {$model->username} Berhasil Dihapus.");
-
-                return ApiResponse::successResponse("");
-            }
+            return ApiResponse::successResponse("");
         } catch(\Throwable $e) {
-            return ApiResponse::errorResponse("Gagal Menghapus Data User : {$e->getMessage()}");
+            return ApiResponse::errorResponse("Gagal Menghapus Data Post : {$e->getMessage()}");
         }
     }
 }

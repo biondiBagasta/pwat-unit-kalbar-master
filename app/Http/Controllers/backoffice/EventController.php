@@ -29,7 +29,7 @@ class EventController extends Controller
             }
         )->count();
 
-        $totalPage =  round(($count / $pageTake) + 0.4);
+        $totalPage = ceil(($count / $pageTake) + 0.4);
 
         $data = Events::with("event_category", "event_galleries")->where(
             function ($q) use($term) {

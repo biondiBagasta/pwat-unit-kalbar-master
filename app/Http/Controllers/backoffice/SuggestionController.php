@@ -28,7 +28,7 @@ class SuggestionController extends Controller
             });
         })->count();
 
-        $totalPage =  round(($count / $pageTake) + 0.4);
+        $totalPage = ceil(($count / $pageTake) + 0.4);
 
         $data = Suggestions::with("member", "suggestion_category")->where(
         function ($q) use($term) {

@@ -129,7 +129,7 @@
                     <!--end::Menu-->
                 </div>
                 <div class="app-navbar-item ms-1 ms-lg-3 fs-4 fw-semibold">
-                    {{ Auth::guard("web")->user()?->full_name ?? 'Biondi Bagasta Wiko Putra' }}
+                    {{ Auth::user()?->member->full_name ?? 'Biondi Bagasta Wiko Putra' }}
                 </div>
                 <!--end::Theme mode-->
                 <!--begin::User menu-->
@@ -137,10 +137,10 @@
                     <!--begin::Menu wrapper-->
                     <div class="cursor-pointer symbol symbol-35px symbol-md-40px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
                         <img src="{{
-                            (Auth::guard("web")->user()?->photo) ?
-                            url('/storage/users/' . Auth::guard('web')->user()->photo ) :
+                            (Auth::user()?->member->photo) ?
+                            url('/storage/members/' . Auth::guard('web')->user()->member->photo ) :
 
-                            'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+                            url('/storage/members/user-default.png')
                         }}" alt="user" />
                     </div>
                     <!--begin::User account menu-->
@@ -151,8 +151,8 @@
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-50px me-5">
                                     <img src="{{
-                            Auth::guard("web")->user()?->photo ?
-                            url('/storage/users/' . Auth::guard('web')->user()->photo ) :
+                            Auth::user()?->photo ?
+                            url('/storage/members/' . Auth::guard('web')->user()->member->photo ) :
 
                             'https://cdn-icons-png.flaticon.com/512/149/149071.png'
                         }}" alt="user" />
@@ -160,8 +160,8 @@
                                 <!--end::Avatar-->
                                 <!--begin::Username-->
                                 <div class="d-flex flex-column">
-                                    <div class="fw-bold d-flex align-items-center fs-5">{{ Auth::guard("web")->user()?->full_name ?? 'Biondi Bagasta Wiko Putra' }}
-                                    <span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">{{ Auth::guard("web")->user()?->role ?? 'SUPER ADMIN' }}</span></div>
+                                    <div class="fw-bold d-flex align-items-center fs-5">{{ Auth::user()?->member->full_name ?? 'ADMIN' }}
+                                    <span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">{{ Auth::user()?->user_role->name ?? 'SUPER ADMIN' }}</span></div>
                                 </div>
                                 <!--end::Username-->
                             </div>
@@ -172,7 +172,11 @@
                         <!--end::Menu separator-->
                         <!--begin::Menu item-->
                         <div class="menu-item px-5">
-                            <a href="#" class="menu-link px-5">Edit Profil</a>
+                            @if(Auth::user()->member)
+                            <a href="{{ route("member-profile.overview", Auth::user()->member->id )}}" class="menu-link px-5">Profil</a>
+                            @else
+                            <a href="#" class="menu-link px-5">Profil</a>
+                            @endif
                         </div>
                         <!--end::Menu item-->
                         <!--begin::Menu item-->

@@ -7,12 +7,17 @@ use App\Http\Controllers\backoffice\EventController;
 use App\Http\Controllers\backoffice\FinanceCategoryController;
 use App\Http\Controllers\backoffice\FinanceController;
 use App\Http\Controllers\backoffice\MemberController;
+use App\Http\Controllers\backoffice\MemberProfileController;
 use App\Http\Controllers\backoffice\MemberRoleController;
 use App\Http\Controllers\backoffice\MemberTypeController;
+use App\Http\Controllers\backoffice\PostCategoryController;
+use App\Http\Controllers\backoffice\PostController;
 use App\Http\Controllers\backoffice\SuggestionCategoryController;
 use App\Http\Controllers\backoffice\SuggestionController;
 use App\Http\Controllers\backoffice\UserController;
 use App\Http\Controllers\backoffice\UserRoleController;
+use App\Http\Middleware\BackofficePageMiddleware;
+use App\Http\Middleware\LoginPageMiddleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -22,7 +27,10 @@ Route::get('/', function () {
 });
 
 Route::group(["prefix" => "auth"], function() {
-    Route::get("login", [AuthController::class, "index"])->name("login.index");
+    Route::get("login", [AuthController::class, "index"])->name("login.index")
+    ->middleware(LoginPageMiddleware::class);
+
+    Route::post("login", [AuthController::class, "login"])->name("auth.login");
     Route::post("logout", [AuthController::class, "logout"])->name("auth.logout");
 });
 
@@ -40,7 +48,7 @@ Route::get("storage/{folder}/{filename}", function($folder, $filename) {
     return Response::make($file, 200)->header("Content-Type", $type);
 });
 
-Route::group(["prefix" => "backoffice"], function() {
+Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware::class], function() {
     Route::get("dashboard", [DashboardController::class, "index"])->name("dashboard.index");
 
     // Member Roles Route
@@ -96,6 +104,19 @@ Route::group(["prefix" => "backoffice"], function() {
     Route::get("suggestion/edit/{id}", [SuggestionController::class, "edit"])->name("suggestion.edit");
     Route::delete("suggestion/delete/{id}", [SuggestionController::class, "delete"])->name("suggestion.delete");
 
+    // Post Category Route
+    Route::post("post-category/create", [PostCategoryController::class, "create"])->name("post-category.create");
+    Route::get("post-category/edit/{id}", [PostCategoryController::class, "edit"])->name("post-category.edit");
+    Route::put("post-category/update/{id}", [PostCategoryController::class, "update"])->name("post-category.update");
+    Route::delete("post-category/delete/{id}", [PostCategoryController::class, "delete"])->name("post-category.delete");
+
+    // Post Route
+    Route::get("post", [PostController::class, "index"])->name("post.index");
+    Route::post("post/create", [PostController::class, "create"])->name("post.create");
+    Route::put("post/update/{id}", [PostController::class, "update"])->name("post.update");
+    Route::get("post/edit/{id}", [PostController::class, "edit"])->name("post.edit");
+    Route::delete("post/delete/{id}", [PostController::class, "delete"])->name("post.delete");
+
     // Event Category Route
     Route::post("event-category/create", [EventCategoryController::class, "create"])->name("event-category.create");
     Route::get("event-category/edit/{id}", [EventCategoryController::class, "edit"])->name("event-category.edit");
@@ -121,4 +142,7 @@ Route::group(["prefix" => "backoffice"], function() {
     Route::put("finance/update/{id}", [FinanceController::class, "update"])->name("finance.update");
     Route::get("finance/edit/{id}", [FinanceController::class, "edit"])->name("finance.edit");
     Route::delete("finance/delete/{id}", [FinanceController::class, "delete"])->name("finance.delete");
+
+    // Member Profile Route
+    Route::get("member-profile/overview/{id}", [MemberProfileController::class, "overview"])->name("member-profile.overview");
 });

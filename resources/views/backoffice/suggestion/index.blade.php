@@ -48,10 +48,6 @@ Saran
                 <h2 class="card-title mb-5">Data Saran</h2>
 
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                    <button type="button" class="btn btn-primary" id="createButton">
-                        <i class="las la-plus-circle fs-2 me-1"></i>
-                        Tambah Data
-                    </button>
 
                     <div class="d-flex flex-column flex-md-row align-items-center gap-2">
                         <div class="form-group mt-5">
@@ -59,7 +55,7 @@ Saran
                                 <span class="input-group-text" id="basic-addon3">
                                     <i class="las la-search fs-2"></i>
                                 </span>
-                                <input type="text" placeholder="Ketik Kata Kunci, Role..."
+                                <input type="text" placeholder="Ketik Kata Kunci..."
                                 class="form-control" id="search" aria-describedby="basic-addon3" />
                             </div>
                         </div>

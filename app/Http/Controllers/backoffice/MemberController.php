@@ -40,7 +40,7 @@ class MemberController extends Controller
             });
         })->count();
 
-        $totalPage =  round(($count / $pageTake) + 0.4);
+        $totalPage = ceil(($count / $pageTake) + 0.4);
 
         $data = Members::with("member_role", "member_type", "user", "regency.province")->where(
         function ($q) use($term) {

@@ -96,6 +96,22 @@
                 <div class="menu-item">
                     <!--begin:Menu link-->
                     <a class="
+                    {{ request()->route()->named('post.index') ?
+                    'menu-link active' : 'menu-link' }}"
+                    href="{{ route('post.index') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/abstract/abs014.svg-->
+                            <i class="las la-file-alt fs-1 text-light"></i>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Post</span>
+                    </a>
+                    <!--end:Menu link-->
+                </div>
+
+                <div class="menu-item">
+                    <!--begin:Menu link-->
+                    <a class="
                     {{ request()->route()->named('suggestion.index') ?
                     'menu-link active' : 'menu-link' }}"
                     href="{{ route('suggestion.index') }}">

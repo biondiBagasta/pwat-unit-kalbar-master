@@ -29,7 +29,7 @@ class FinanceController extends Controller
         ->where("finance_date", "<=", $end_date)
         ->count();
 
-        $totalPage =  round(($count / $pageTake) + 0.4);
+        $totalPage = ceil(($count / $pageTake) + 0.4);
 
         $data = Finances::with("finance_category")
         ->where("finance_date", ">=", $start_date)

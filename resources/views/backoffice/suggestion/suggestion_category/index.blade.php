@@ -72,8 +72,8 @@
                 blockUI.block();
                 const formData = new FormData();
 
-                formData.append("code_2", code);
-                formData.append("name_2", name);
+                formData.append("code", code);
+                formData.append("name", name);
 
                 $.ajax({
                     data: formData,

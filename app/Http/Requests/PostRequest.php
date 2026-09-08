@@ -24,7 +24,6 @@ class PostRequest extends FormRequest
         return [
             "title" => "required",
             "content" => "required",
-            "location" => "required",
             "hastag" => "required",
             "post_category_id" => "required"
         ];

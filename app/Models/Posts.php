@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $title
  * @property string $content
- * @property string $location
  * @property string $hastag
  * @property int $post_status_id
  * @property int $posted_by
@@ -27,10 +26,14 @@ class Posts extends Model
     }
 
     public function posted_by() {
-        return $this->belongsTo(Members::class, "posted_by", "member");
+        return $this->belongsTo(Members::class, "posted_by");
     }
 
     public function post_category() {
         return $this->belongsTo(PostCategories::class, "post_category_id");
+    }
+
+    public function member() {
+        return $this->belongsTo(Members::class, "posted_by");
     }
 }
