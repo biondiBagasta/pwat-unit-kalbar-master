@@ -28,7 +28,8 @@ class UserController extends Controller
 
         $data = User::with("user_role")->where([
             ["username", "like", "%" . $term . "%"],
-        ])->get();
+        ])->take($pageTake)
+        ->skip(($currentPage - 1) * $pageTake)->get();
 
         // Bagian Data User Roles
         $user_roles_data = UserRoles::orderBy("name", "asc")->get();

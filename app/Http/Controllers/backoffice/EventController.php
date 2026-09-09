@@ -38,7 +38,8 @@ class EventController extends Controller
                     $p0->where("name", "like", "%{$term}%");
                 });
             }
-        )->get();
+        )->take($pageTake)
+        ->skip(($currentPage - 1) * $pageTake)->get();
 
         // Bagian Event Category
         $event_categories_data = EventCategories::orderBy("name", "asc")->get();

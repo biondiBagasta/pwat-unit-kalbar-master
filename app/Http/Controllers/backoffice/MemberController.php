@@ -12,6 +12,8 @@ use App\Models\Provinces;
 use App\Models\Regencies;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class MemberController extends Controller
 {
@@ -51,7 +53,8 @@ class MemberController extends Controller
             })->orWhereHas("member_type", function ($q2) use($term) {
                 $q2->where("name", "like", "%{$term}%");
             });
-        })->get();
+        })->take($pageTake)
+        ->skip(($currentPage - 1) * $pageTake)->get();
 
 
 
@@ -139,6 +142,66 @@ class MemberController extends Controller
             return ApiResponse::successResponse("");
         } catch(\Throwable $e) {
             return ApiResponse::errorResponse("Gagal Mengupdate Data Member : {$e->getMessage()}");
+        }
+    }
+
+    public function updateProfile(Request $request, $id) {
+        DB::beginTransaction();
+        try {
+            $model = Members::find($id);
+
+            $model_user = User::find($model->user_id);
+
+            $model->full_name = $request["full_name"];
+            $model->address = $request["address"];
+            $model->phone_number = $request["phone_number"];
+            $model->job = $request["job"];
+            $model->husband_name = $request["husband_name"];
+            $model->husband_occupation = $request["husband_occupation"];
+            $model->regency_id = $request["regency_id"];
+
+            // Update Data User
+            $model_user->username = $request["username"];
+
+            if($request["password"]) {
+                $model_user->password = Hash::make($request["password"]);
+            }
+
+            if($request["photo"]) {
+                $filename = time().'_'.$request["photo"]->getClientOriginalName();
+                $request["photo"]->storeAs("members", $filename, 'public');
+                $model->photo = $filename;
+            }
+
+            $model->save();
+            $model_user->save();
+
+            DB::commit();
+
+            session()->flash("update", "Data Member {$request['name']} Berhasil Diupdate.");
+
+            return ApiResponse::successResponse("");
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            return ApiResponse::errorResponse("Gagal Mengupdate Data Member : {$e->getMessage()}");
+        }
+    }
+
+    public function checkUsernameUpdateProfile(Request $request) {
+        $username = $request["username"];
+        $id = $request["id"];
+
+        $dataUser = User::where("username", "=", $username)->first();
+        $dataMember = Members::find($id);
+
+        if($dataUser == null) {
+            return ApiResponse::successResponse("Username tersedia.");
+        } else {
+            if($dataUser->id == $dataMember->user_id) {
+                return ApiResponse::successResponse("Username tersedia.");
+            } else {
+                return ApiResponse::errorResponse("Username sudah digunakan!!!");
+            }
         }
     }
 

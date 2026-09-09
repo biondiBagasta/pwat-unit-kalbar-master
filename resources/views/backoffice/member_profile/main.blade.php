@@ -5,6 +5,9 @@ Member Profile
 @endsection
 
 @section("content")
+@include("backoffice.member_profile.header")
+@include("backoffice.member_profile.tabs")
+
 @if(session("create"))
 <div class="alert alert-success d-flex align-items-center p-5 mb-5">
     <i class="las la-check-circle fs-2hx text-success me-4">
@@ -40,9 +43,5 @@ Member Profile
     </div>
 </div>
 @endif
-
-@include("backoffice.member_profile.header")
-@include("backoffice.member_profile.tabs")
-
 @yield("tab")
 @endsection

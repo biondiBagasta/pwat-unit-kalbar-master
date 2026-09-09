@@ -77,15 +77,15 @@
 <ul class="pagination mt-5">
     <li class="{{ $current_page == 1 ? 'page-item previous disabled' :
     'page-item previous' }}">
-        <a class="page-link page-text" href="{{ url("backoffice/suggestion?term=$term&page=" . ($current_page - 1)) }}">Previous</span></a>
+        <a class="page-link page-text" href="{{ url("backoffice/event?term=$term&page=" . ($current_page - 1)) }}">Previous</span></a>
     </li>
     @for ($i = 1; $i <= $total_page; $i++)
         <li class="{{ $current_page == $i ? 'page-item active' : 'page-item'}}">
-            <a href="{{ url("backoffice/suggestion?term=$term&page=$i") }}" class="page-link">{{ $i }}</a>
+            <a href="{{ url("backoffice/event?term=$term&page=$i") }}" class="page-link">{{ $i }}</a>
         </li>
     @endfor
     <li class="{{ $current_page == $total_page ? 'page-item previous disabled' :
     'page-item previous' }}">
-        <a class="page-link page-text" href="{{ url("backoffice/suggestion?term=$term&page=" . ($current_page + 1)) }}">Next</span></a>
+        <a class="page-link page-text" href="{{ url("backoffice/event?term=$term&page=" . ($current_page + 1)) }}">Next</span></a>
     </li>
 </ul>

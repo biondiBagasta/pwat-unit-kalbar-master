@@ -1,7 +1,8 @@
 <!--begin::Navbar-->
 <div class="card card-flush mb-9" id="kt_user_profile_panel">
     <!--begin::Hero nav-->
-    <div class="card-header rounded-top bgi-size-cover h-200px" style="background-position: 100% 50%; background-image:url('assets/media/misc/profile-head-bg.jpg')"></div>
+    <div class="card-header rounded-top bgi-size-cover h-200px" style="background-position: 100% 50%;
+    background-image:url({{ asset('theme/media/misc/city-background.jpg') }})"></div>
     <!--end::Hero nav-->
     <!--begin::Body-->
     <div class="card-body mt-n19">
@@ -46,38 +47,30 @@
                     </div>
                     <!--end::Name-->
                     <!--begin::Text-->
-                    <span class="fw-bold text-gray-600 fs-6 mb-2 d-block">Design is like a fart. If you have to force it, it’s probably shit.</span>
+                    <span class="fw-bold text-gray-600 fs-6 mb-2 d-block">
+                        {{ Auth::user()->member->regency->name }}, {{ Auth::user()->member->regency->province->name }}
+                    </span>
                     <!--end::Text-->
                     <!--begin::Info-->
                     <div class="d-flex align-items-center flex-wrap fw-semibold fs-7 pe-2">
-                        <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary">UI/UX Design</a>
+                        <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary">
+                            {{ Auth::user()->member->member_type->name }}
+                        </a>
                         <span class="bullet bullet-dot h-5px w-5px bg-gray-400 mx-3"></span>
-                        <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary">Austin, TX</a>
-                        <span class="bullet bullet-dot h-5px w-5px bg-gray-400 mx-3"></span>
-                        <a href="#" class="text-gray-400 text-hover-primary">3,450 Followers</a>
+                        <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary">
+                            {{ Auth::user()->member->member_role->name }}
+                        </a>
                     </div>
                     <!--end::Info-->
                 </div>
                 <!--end::User-->
                 <!--begin::Actions-->
                 <div class="d-flex">
-                    <a href="#" class="btn btn-sm btn-light me-3" id="kt_drawer_chat_toggle">Send Message</a>
-                    <button class="btn btn-sm btn-primary" id="kt_user_follow_button">
-                        <!--begin::Svg Icon | path: icons/duotune/arrows/arr012.svg-->
-                        <span class="svg-icon svg-icon-3 d-none">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path opacity="0.3" d="M10 18C9.7 18 9.5 17.9 9.3 17.7L2.3 10.7C1.9 10.3 1.9 9.7 2.3 9.3C2.7 8.9 3.29999 8.9 3.69999 9.3L10.7 16.3C11.1 16.7 11.1 17.3 10.7 17.7C10.5 17.9 10.3 18 10 18Z" fill="currentColor" />
-                                <path d="M10 18C9.7 18 9.5 17.9 9.3 17.7C8.9 17.3 8.9 16.7 9.3 16.3L20.3 5.3C20.7 4.9 21.3 4.9 21.7 5.3C22.1 5.7 22.1 6.30002 21.7 6.70002L10.7 17.7C10.5 17.9 10.3 18 10 18Z" fill="currentColor" />
-                            </svg>
-                        </span>
-                        <!--end::Svg Icon-->
-                        <!--begin::Indicator label-->
-                        <span class="indicator-label">Follow</span>
-                        <!--end::Indicator label-->
-                        <!--begin::Indicator progress-->
-                        <span class="indicator-progress">Please wait...
-                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                        <!--end::Indicator progress-->
+                    <button type="button"
+                        class="btn btn-sm btn-primary me-3"
+                        id="sendMessage">
+                        <i class="las la-envelope fs-2 me-1"></i>
+                        Kirim Surat
                     </button>
                 </div>
                 <!--end::Actions-->

@@ -24,7 +24,8 @@ class SuggestionRequest extends FormRequest
         return [
             "title" => "required",
             "content" => "required",
-            "suggestion_category_id" => "required"
+            "suggestion_category_id" => "required",
+            "cover_image" => "required"
         ];
     }
 }

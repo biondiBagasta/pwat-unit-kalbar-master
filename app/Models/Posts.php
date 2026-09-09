@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $post_status_id
  * @property int $posted_by
  * @property int $post_category_id
+ * @property string cover_image
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */

@@ -157,6 +157,15 @@ Post
                 $('#detailContentModalTitle').html(`Konten Post ${data.title} oleh ${data.member.full_name}`);
                 $("#detailContentBody").html(data.content)
                 $('#detailContentModal').modal('show');
+
+                if(data.cover_image == null) {
+                    $("#detailCoverImage").attr("src", "{{ url('/storage/posts/cover-default.jpg') }}");
+                } else {
+                    var url = "{{ url('/storage/posts/:image') }}";
+                    url = url.replace(':image', data.cover_image);
+
+                    $("#detailCoverImage").attr("src", url);
+                }
             })
         })
     });

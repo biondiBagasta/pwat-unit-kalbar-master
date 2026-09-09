@@ -37,7 +37,8 @@ class SuggestionController extends Controller
             })->orWhereHas("suggestion_category", function ($p1) use($term) {
                 $p1->where("name", "like", "%{$term}%");
             });
-        })->get();
+        })->take($pageTake)
+        ->skip(($currentPage - 1) * $pageTake)->get();
 
         // Bagian Suggestion Category
         $suggestion_categories_data = SuggestionCategories::orderBy("name", "asc")->get();
@@ -60,6 +61,13 @@ class SuggestionController extends Controller
             $model->title = $request["title"];
             $model->content = $request["content"];
             $model->suggestion_category_id = $request["suggestion_category_id"];
+
+            if($request["cover_image"]) {
+                $filename = time().'_'.$request["cover_image"]->getClientOriginalName();
+                $request["cover_image"]->storeAs("posts", $filename, 'public');
+                $model->cover_image = $filename;
+            }
+
 
             $model->save();
 
@@ -85,6 +93,12 @@ class SuggestionController extends Controller
             $model->title = $request["title"];
             $model->content = $request["content"];
             $model->suggestion_category_id = $request["suggestion_category_id"];
+
+            if($request["cover_image"]) {
+                $filename = time().'_'.$request["cover_image"]->getClientOriginalName();
+                $request["cover_image"]->storeAs("posts", $filename, 'public');
+                $model->cover_image = $filename;
+            }
 
             $model->save();
 

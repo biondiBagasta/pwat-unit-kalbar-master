@@ -34,6 +34,8 @@ class FinanceController extends Controller
         $data = Finances::with("finance_category")
         ->where("finance_date", ">=", $start_date)
         ->where("finance_date", "<=", $end_date)
+        ->take($pageTake)
+        ->skip(($currentPage - 1) * $pageTake)
         ->get();
 
         // Bagian Data User Roles

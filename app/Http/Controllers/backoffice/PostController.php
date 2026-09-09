@@ -23,7 +23,7 @@ class PostController extends Controller
         $count = Posts::where(
         function ($q) use($term) {
             $q->where("title", "like", "%{$term}%")
-            ->orWhere("hastag", "like", "%{$term}%")
+            ->orWhere("hashtag", "like", "%{$term}%")
             ->orWhereHas("post_category", function ($q2) use($term) {
                 $q2->where("name", "like", "%{$term}%");
             })->orWhereHas("posted_by", function ($q2) use($term) {
@@ -36,13 +36,14 @@ class PostController extends Controller
         $data = Posts::with("post_category", "member")->where(
         function ($q) use($term) {
             $q->where("title", "like", "%{$term}%")
-            ->orWhere("hastag", "like", "%{$term}%")
+            ->orWhere("hashtag", "like", "%{$term}%")
             ->orWhereHas("post_category", function ($q2) use($term) {
                 $q2->where("name", "like", "%{$term}%");
             })->orWhereHas("posted_by", function ($q2) use($term) {
                 $q2->where("full_name", "like", "%{$term}%");
             });
-        })->get();
+        })->take($pageTake)
+        ->skip(($currentPage - 1) * $pageTake)->get();
 
         // Bagian Data User Roles
         $post_categories_data = PostCategories::orderBy("name", "asc")->get();
@@ -64,10 +65,16 @@ class PostController extends Controller
 
             $model->title = $request["title"];
             $model->content = $request["content"];
-            $model->hastag = $request["hastag"];
+            $model->hashtag = $request["hashtag"];
             $model->post_category_id = $request["post_category_id"];
             $model->post_status_id = 1;
             $model->posted_by = Auth::user()->member->id;
+
+            if($request["cover_image"]) {
+                $filename = time().'_'.$request["cover_image"]->getClientOriginalName();
+                $request["cover_image"]->storeAs("posts", $filename, 'public');
+                $model->cover_image = $filename;
+            }
 
             $model->save();
 
@@ -92,10 +99,16 @@ class PostController extends Controller
 
             $model->title = $request["title"];
             $model->content = $request["content"];
-            $model->hastag = $request["hastag"];
+            $model->hashtag = $request["hashtag"];
             $model->post_category_id = $request["post_category_id"];
             $model->post_status_id = 1;
             $model->posted_by = Auth::user()->member->id;
+
+            if($request["cover_image"]) {
+                $filename = time().'_'.$request["cover_image"]->getClientOriginalName();
+                $request["cover_image"]->storeAs("posts", $filename, 'public');
+                $model->cover_image = $filename;
+            }
 
             $model->save();
 

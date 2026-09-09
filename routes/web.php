@@ -51,12 +51,6 @@ Route::get("storage/{folder}/{filename}", function($folder, $filename) {
 Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware::class], function() {
     Route::get("dashboard", [DashboardController::class, "index"])->name("dashboard.index");
 
-    // Member Roles Route
-    Route::post("member-role/create", [MemberRoleController::class, "create"])->name("member-role.create");
-    Route::get("member-role/edit/{id}", [MemberRoleController::class, "edit"])->name("member-role.edit");
-    Route::put("member-role/update/{id}", [MemberRoleController::class, "update"])->name("member-role.update");
-    Route::delete("member-role/delete/{id}", [MemberRoleController::class, "delete"])->name("member-role.delete");
-
     // User Roles Route
     Route::post("user-role/create", [UserRoleController::class, "create"])->name("user-role.create");
     Route::get("user-role/edit/{id}", [UserRoleController::class, "edit"])->name("user-role.edit");
@@ -75,8 +69,10 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::post("member/create", [MemberController::class, "create"])->name("member.create");
     Route::get("member/edit/{id}", [MemberController::class, "edit"])->name("member.edit");
     Route::put("member/update/{id}", [MemberController::class, "update"])->name("member.update");
+    Route::put("member/update-profile/{id}", [MemberController::class, "updateProfile"])->name("member.update-profile");
     Route::delete("member/delete/{id}", [MemberController::class, "delete"])->name("member.delete");
     Route::post("member/check-username", [MemberController::class, "checkUsername"])->name("member.check-username");
+    Route::post("member/check-username-update-profile", [MemberController::class, "checkUsernameUpdateProfile"])->name("member.check-username-update-profile");
     Route::post("member/find-many-regency", [MemberController::class, "findManyRegency"])->name("member.find-many-regency");
 
     // Member Role Route
@@ -144,5 +140,6 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::delete("finance/delete/{id}", [FinanceController::class, "delete"])->name("finance.delete");
 
     // Member Profile Route
-    Route::get("member-profile/overview/{id}", [MemberProfileController::class, "overview"])->name("member-profile.overview");
+    Route::get("member-profile/overview/{id}", [MemberProfileController::class, "overviewPage"])->name("member-profile.overview");
+    Route::get("member-profile/post/{id}", [MemberProfileController::class, "postPage"])->name("member-profile.post");
 });

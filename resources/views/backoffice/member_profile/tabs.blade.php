@@ -4,34 +4,28 @@
     <ul class="nav flex-wrap border-transparent">
         <!--begin::Nav item-->
         <li class="nav-item my-1">
-            <a class="btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1 active" href="../../demo1/dist/pages/user-profile/overview.html">Overview</a>
+            <a class="{{
+                request()->route()->named('member-profile.overview') ?
+                'btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1 active' :
+                'btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1'
+            }}"
+            href="{{ route("member-profile.overview", $member_id) }}">Overview</a>
         </li>
         <!--end::Nav item-->
         <!--begin::Nav item-->
         <li class="nav-item my-1">
-            <a class="btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1" href="../../demo1/dist/pages/user-profile/projects.html">Projects</a>
+            <a class="{{
+                request()->route()->named('member-profile.post') ?
+                'btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1 active' :
+                'btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1'
+            }}"
+            href="{{ route("member-profile.post", $member_id) }}">Posts</a>
         </li>
         <!--end::Nav item-->
         <!--begin::Nav item-->
         <li class="nav-item my-1">
-            <a class="btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1" href="../../demo1/dist/pages/user-profile/campaigns.html">Campaigns</a>
+            <a class="btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1" href="../../demo1/dist/pages/user-profile/campaigns.html">Saran</a>
         </li>
-        <!--end::Nav item-->
-        <!--begin::Nav item-->
-        <li class="nav-item my-1">
-            <a class="btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1" href="../../demo1/dist/pages/user-profile/documents.html">Documents</a>
-        </li>
-        <!--end::Nav item-->
-        <!--begin::Nav item-->
-        <li class="nav-item my-1">
-            <a class="btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1" href="../../demo1/dist/pages/user-profile/followers.html">Followers</a>
-        </li>
-        <!--end::Nav item-->
-        <!--begin::Nav item-->
-        <li class="nav-item my-1">
-            <a class="btn btn-sm btn-color-gray-600 bg-state-body btn-active-color-gray-800 fw-bolder fw-bold fs-6 fs-lg-base nav-link px-3 px-lg-4 mx-1" href="../../demo1/dist/pages/user-profile/activity.html">Activity</a>
-        </li>
-        <!--end::Nav item-->
     </ul>
     <!--end::Nav-->
 </div>

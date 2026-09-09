@@ -151,10 +151,10 @@
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-50px me-5">
                                     <img src="{{
-                            Auth::user()?->photo ?
+                            (Auth::user()?->member->photo) ?
                             url('/storage/members/' . Auth::guard('web')->user()->member->photo ) :
 
-                            'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+                            url('/storage/members/user-default.png')
                         }}" alt="user" />
                                 </div>
                                 <!--end::Avatar-->

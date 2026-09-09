@@ -137,10 +137,6 @@ Member
 
         let isValidUsername = false;
 
-        console.log(@json($total_page))
-        console.log(@json($count))
-
-
         $("#username").on("input", debounce(function() {
             const username = $(this).val();
 

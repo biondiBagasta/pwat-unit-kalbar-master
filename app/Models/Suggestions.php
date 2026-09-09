@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $content
  * @property int $member_id
  * @property int $suggestion_category_id
+ * @property string $cover_image
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */

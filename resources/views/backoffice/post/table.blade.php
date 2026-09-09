@@ -4,11 +4,11 @@
             <tr class="fw-bold fs-6 text-muted">
                 <th>Posted By</th>
                 <th>Judul</th>
-                <th>Isi</th>
-                <th>Hastag</th>
+                <th>Konten</th>
+                <th>hashtag</th>
                 <th>Kategori</th>
                 <th>Tanggal Post</th>
-                <th>Status</th>
+                <th>Publish Status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -24,13 +24,13 @@
                         data-id="{{ $d->id }}">
                             <div class="d-flex flex-row gap-2">
                                 <i class="las la-eye fs-2"></i>
-                                <div>Lihat Isi</div>
+                                <div>Lihat</div>
                             </div>
                         </button>
                     </td>
                     <td>
                         <div class="fw-bold">
-                            {{ $d->hastag }}
+                            {{ $d->hashtag }}
                         </div>
                     </td>
                     <td>
@@ -79,15 +79,15 @@
 <ul class="pagination mt-5">
     <li class="{{ $current_page == 1 ? 'page-item previous disabled' :
     'page-item previous' }}">
-        <a class="page-link page-text" href="{{ url("backoffice/suggestion?term=$term&page=" . ($current_page - 1)) }}">Previous</span></a>
+        <a class="page-link page-text" href="{{ url("backoffice/post?term=$term&page=" . ($current_page - 1)) }}">Previous</span></a>
     </li>
     @for ($i = 1; $i <= $total_page; $i++)
         <li class="{{ $current_page == $i ? 'page-item active' : 'page-item'}}">
-            <a href="{{ url("backoffice/suggestion?term=$term&page=$i") }}" class="page-link">{{ $i }}</a>
+            <a href="{{ url("backoffice/post?term=$term&page=$i") }}" class="page-link">{{ $i }}</a>
         </li>
     @endfor
     <li class="{{ $current_page == $total_page ? 'page-item previous disabled' :
     'page-item previous' }}">
-        <a class="page-link page-text" href="{{ url("backoffice/suggestion?term=$term&page=" . ($current_page + 1)) }}">Next</span></a>
+        <a class="page-link page-text" href="{{ url("backoffice/post?term=$term&page=" . ($current_page + 1)) }}">Next</span></a>
     </li>
 </ul>

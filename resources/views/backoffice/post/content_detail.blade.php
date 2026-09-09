@@ -14,6 +14,19 @@
             </div>
 
             <div class="modal-body">
+                <div class="w-full d-flex flex-row justify-content-center mb-10">
+                    <img
+                        id="detailCoverImage"
+                        class="w-full"
+                        style="
+                            border-radius: 12px;
+                            max-width: 100%;
+                            max-height: 300px;
+                            object-fit: cover;
+                            display: block;
+                        "
+                    />
+                </div>
                 <div id="detailContentBody"></div>
             </div>
         </div>
