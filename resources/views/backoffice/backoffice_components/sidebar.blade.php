@@ -49,6 +49,22 @@
                     <!--end:Menu link-->
                 </div>
 
+                <div class="menu-item">
+                    <!--begin:Menu link-->
+                    <a class="
+                    {{ request()->route()->named('carousel.index') ?
+                    'menu-link active' : 'menu-link' }}"
+                    href="{{ route('carousel.index') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/abstract/abs014.svg-->
+                            <i class="las la-photo-video fs-1 text-light"></i>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Carousel</span>
+                    </a>
+                    <!--end:Menu link-->
+                </div>
+
                 <div class="menu-item pt-5">
                     <div class="menu-content">
                         <span class="menu-heading fw-bold text-uppercase fs-7">Kelola Data User dan Member</span>

@@ -78,6 +78,10 @@ Event
 </div>
 
 @include("backoffice.event.form")
+
+@include("backoffice.event.image_form")
+
+@include("backoffice.event.content_detail")
 @endsection
 
 @section("script")
@@ -345,6 +349,109 @@ Event
                 }
             });
         });
+
+        // Detail Content
+        $("body").on("click", ".detail-content", function() {
+            var id = $(this).data("id")
+
+            $.get("backoffice/event/edit" + "/" + id, function(data) {
+                $('#detailContentModalTitle').html(`Detail Event ${data.name}`);
+                $("#detailContentBody").html(data.content)
+                $('#detailContentModal').modal('show');
+            })
+        });
+
+        // Detail Content
+        $("body").on("click", ".gallery-button", function() {
+            var id = $(this).data('id');
+            var url = "{{ route('event.edit', ":id") }}";
+            url = url.replace(':id', id);
+
+            $.get(url, function(data) {
+                console.log(data)
+                $('#imageFormModalTitle').html(`Gallery Event ${data.name}`);
+
+                if(data.event_galleries.length == 0) {
+                    $("#imageFormAlert").html(
+                        `<div class="alert alert-danger d-flex align-items-center p-5">
+                            <i class="las la-exclamation-triangle fs-2hx text-danger me-4">
+
+                            </i>
+                            <div class="d-flex flex-column">
+                                <!--begin::Title-->
+                                <h4 class="mt-3 text-dark">Belum Ada Gallery untuk Event ini.</h4>
+                            </div>
+                            <!--end::Wrapper-->
+                        </div>`
+                    )
+                } else {
+                    let tbodyHtml = "";
+
+                    $.each(data.event_galleries, function(index, d) {
+                        tbodyHtml += `
+                            <tr>
+                                <td>
+                                   <a class="d-block overlay" data-fslightbox="lightbox-basic"
+                                   href="{{ url('/storage/events') }}/${d.photo}">
+                                        <!--begin::Image-->
+                                        <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-100px"
+                                            style="background-image:url('{{ url('/storage/events') }}/${d.photo}')">
+                                        </div>
+                                        <!--end::Image-->
+
+                                        <!--begin::Action-->
+                                        <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow">
+                                            <i class="bi bi-eye-fill text-white fs-3x"></i>
+                                        </div>
+                                        <!--end::Action-->
+                                    </a>
+                                </td>
+                                <td>
+                                    ${d.member.full_name}
+                                </td>
+                                <td>
+                                    ${d.member.full_name}
+                                </td>
+                            </tr>
+                        `
+                    })
+                }
+
+
+                $('#imageFormModal').modal('show');
+            })
+        });
+
+        // Select Image Logic
+
+        $("#addImageButton").on("click", function() {
+            $("#select-image-input").trigger("click");
+        });
+
+        $("#select-image-input").on("change", function() {
+            const files = this.files;
+
+            let selectedFileHtml = ""
+
+            $.each(this.files, function(index, file) {
+                const url = URL.createObjectURL(file)
+
+                selectedFileHtml += `
+                    <div class="col-12 col-lg-4">
+                        <div class="symbol symbol-150px symbol-2by3">
+                            <img src="${url}" alt=""/>
+                            <span class="symbol-badge badge badge-circle bg-danger start-100">X</span>
+                        </div>
+                    </div>
+                `
+            });
+
+            $("#selectedImageBody").html(
+                `<div class="row g-10">
+                    ${selectedFileHtml}
+                </div>`
+            )
+        })
     });
 </script>
 @endsection

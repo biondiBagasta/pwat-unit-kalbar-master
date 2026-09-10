@@ -7,6 +7,7 @@ use App\Models\Members;
 use App\Models\PostCategories;
 use App\Models\Posts;
 use App\Models\Provinces;
+use App\Models\SuggestionCategories;
 use App\Models\Suggestions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -63,6 +64,31 @@ class MemberProfileController extends Controller
             "count" => $count,
             "total_page" => $totalPage,
             "post_categories_data" => $post_categories_data
+        ]);
+    }
+
+    public function suggestionPage($id, Request $request) {
+        $pageTake = 20;
+
+        $currentPage = (int) ($request->query("page") ?? 1);
+
+        $count = Suggestions::where("member_id", "=", $id)->count();
+
+        $totalPage = ceil(($count / $pageTake) + 0.4);
+
+        $data = Suggestions::with("suggestion_category", "member")->where("member_id", "=", $id)
+        ->take($pageTake)
+        ->skip(($currentPage - 1) * $pageTake)->get();
+
+        $suggestion_categories_data = SuggestionCategories::orderBy("name", "asc")->get();
+
+        return view("backoffice.member_profile.tab_routes.suggestion.index", [
+            "data" => $data,
+            "member_id" => $id,
+            "current_page" => $currentPage,
+            "count" => $count,
+            "total_page" => $totalPage,
+            "suggestion_categories_data" => $suggestion_categories_data
         ]);
     }
 }

@@ -25,7 +25,7 @@ class SuggestionRequest extends FormRequest
             "title" => "required",
             "content" => "required",
             "suggestion_category_id" => "required",
-            "cover_image" => "required"
+            "cover_image" => "nullable"
         ];
     }
 }

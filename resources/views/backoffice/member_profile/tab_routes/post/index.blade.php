@@ -86,6 +86,7 @@
                             </div>
                         </button>
 
+                        @if($d->post_status->code == "WT")
                         <div class="d-flex flex-column flex-md-row gap-2">
                             <button type="button"
                             class="edit btn btn-sm btn-info"
@@ -104,6 +105,7 @@
                                 </div>
                             </button>
                         </div>
+                        @endif
                     </div>
                     @endif
                 </div>
@@ -380,7 +382,6 @@
             url = url.replace(':id', id);
 
             $.get(url, function(data) {
-                console.log(data.content)
                 $('#detailContentModalTitle').html(`Detail Postingan`);
                 $("#detailContentBody").html(data.content)
                 $('#detailContentModal').modal('show');

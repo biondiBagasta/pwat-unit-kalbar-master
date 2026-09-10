@@ -129,6 +129,14 @@ class MemberController extends Controller
             $model->member_type_id = $request["member_type_id"];
 
             if($request["photo"]) {
+                if($model->photo != null) {
+                    $path = "app/public/members/". $model->photo;
+
+                    if(file_exists(storage_path($path))) {
+                        unlink(storage_path($path));
+                    }
+                }
+
                 $filename = time().'_'.$request["photo"]->getClientOriginalName();
                 $request["photo"]->storeAs("members", $filename, 'public');
                 $model->photo = $filename;
@@ -168,6 +176,14 @@ class MemberController extends Controller
             }
 
             if($request["photo"]) {
+                if($model->photo != null) {
+                    $path = "app/public/members/". $model->photo;
+
+                    if(file_exists(storage_path($path))) {
+                        unlink(storage_path($path));
+                    }
+                }
+
                 $filename = time().'_'.$request["photo"]->getClientOriginalName();
                 $request["photo"]->storeAs("members", $filename, 'public');
                 $model->photo = $filename;

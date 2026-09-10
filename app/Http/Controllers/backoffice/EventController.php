@@ -75,7 +75,7 @@ class EventController extends Controller
     }
 
     public function edit($id) {
-        $data = Events::find($id);
+        $data = Events::with("event_galleries.member")->find($id);
 
         return response()->json($data);
     }

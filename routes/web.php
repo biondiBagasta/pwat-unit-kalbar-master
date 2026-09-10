@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\backoffice\CarouselController;
 use App\Http\Controllers\backoffice\DashboardController;
 use App\Http\Controllers\backoffice\EventCategoryController;
 use App\Http\Controllers\backoffice\EventController;
@@ -50,6 +51,14 @@ Route::get("storage/{folder}/{filename}", function($folder, $filename) {
 
 Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware::class], function() {
     Route::get("dashboard", [DashboardController::class, "index"])->name("dashboard.index");
+
+    // Carousel Route
+    Route::get("carousel", [CarouselController::class, "index"])->name("carousel.index");
+    Route::post("carousel/create", [CarouselController::class, "create"])->name("carousel.create");
+    Route::put("carousel/update/{id}", [CarouselController::class, "update"])->name("carousel.update");
+    Route::get("carousel/edit/{id}", [CarouselController::class, "edit"])->name("carousel.edit");
+    Route::delete("carousel/delete/{id}", [CarouselController::class, "delete"])->name("carousel.delete");
+
 
     // User Roles Route
     Route::post("user-role/create", [UserRoleController::class, "create"])->name("user-role.create");
@@ -110,6 +119,7 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::get("post", [PostController::class, "index"])->name("post.index");
     Route::post("post/create", [PostController::class, "create"])->name("post.create");
     Route::put("post/update/{id}", [PostController::class, "update"])->name("post.update");
+    Route::put("post/update-status/{id}", [PostController::class, "updateStatus"])->name("post.update-status");
     Route::get("post/edit/{id}", [PostController::class, "edit"])->name("post.edit");
     Route::delete("post/delete/{id}", [PostController::class, "delete"])->name("post.delete");
 
@@ -142,4 +152,5 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     // Member Profile Route
     Route::get("member-profile/overview/{id}", [MemberProfileController::class, "overviewPage"])->name("member-profile.overview");
     Route::get("member-profile/post/{id}", [MemberProfileController::class, "postPage"])->name("member-profile.post");
+    Route::get("member-profile/suggestion/{id}", [MemberProfileController::class, "suggestionPage"])->name("member-profile.suggestion");
 });

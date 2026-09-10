@@ -46,11 +46,20 @@
                         <span class="badge badge-light-danger">{{ $d->post_status->name }}</span>
                         @endif
                     </td>
-                    <td>
-                        <button data-toggle="tooltip"  data-id="{{ $d->id }}"
-                        title="Delete" class="btn btn-icon btn-danger btn-sm delete">
-                            <i class="las la-trash fs-4"></i>
-                        </button>
+                    <td width="180px">
+                        <div class="d-flex flex-column gap-2">
+                            <button type="button" class="btn btn-info btn-sm update-status"
+                            data-id="{{ $d->id }}">
+                                <i class="las la-edit fs-2 me-1"></i>
+                                Update Status
+                            </button>
+
+                            <button data-toggle="tooltip" data-id="{{ $d->id }}"
+                            title="Delete" class="btn btn-danger btn-sm delete">
+                                <i class="las la-trash fs-2 me-1"></i>
+                                Hapus
+                            </button>
+                        </div>
                     </td>
                 </tr>
             @endforeach

@@ -8,6 +8,7 @@ use App\Http\Requests\SuggestionRequest;
 use App\Models\SuggestionCategories;
 use App\Models\Suggestions;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SuggestionController extends Controller
 {
@@ -62,9 +63,11 @@ class SuggestionController extends Controller
             $model->content = $request["content"];
             $model->suggestion_category_id = $request["suggestion_category_id"];
 
+            $model->member_id = Auth::user()->member->id;
+
             if($request["cover_image"]) {
                 $filename = time().'_'.$request["cover_image"]->getClientOriginalName();
-                $request["cover_image"]->storeAs("posts", $filename, 'public');
+                $request["cover_image"]->storeAs("suggestions", $filename, 'public');
                 $model->cover_image = $filename;
             }
 
@@ -95,8 +98,16 @@ class SuggestionController extends Controller
             $model->suggestion_category_id = $request["suggestion_category_id"];
 
             if($request["cover_image"]) {
+                if($model->cover_image != null) {
+                    $path = "app/public/suggestions/". $model->cover_image;
+
+                    if(file_exists(storage_path($path))) {
+                        unlink(storage_path($path));
+                    }
+                }
+
                 $filename = time().'_'.$request["cover_image"]->getClientOriginalName();
-                $request["cover_image"]->storeAs("posts", $filename, 'public');
+                $request["cover_image"]->storeAs("suggestions", $filename, 'public');
                 $model->cover_image = $filename;
             }
 
@@ -113,6 +124,14 @@ class SuggestionController extends Controller
     public function delete($id) {
         try {
             $model = Suggestions::find($id);
+
+            if($model->cover_image != null) {
+                $path = "app/public/suggestions/". $model->cover_image;
+
+                if(file_exists(storage_path($path))) {
+                    unlink(storage_path($path));
+                }
+            }
 
             $model->delete();
 

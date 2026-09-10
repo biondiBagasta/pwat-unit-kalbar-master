@@ -46,4 +46,8 @@ class Members extends Model
     public function posts() {
         return $this->hasMany(Posts::class, "posted_by");
     }
+
+    public function event_galleries() {
+        return $this->hasMany(EventGalleries::class);
+    }
 }

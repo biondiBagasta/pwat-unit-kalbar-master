@@ -74,6 +74,8 @@ Post
 
 @include("backoffice.post.content_detail")
 
+@include("backoffice.post.update_status_form")
+
 @endsection
 
 @section("script")
@@ -101,6 +103,14 @@ Post
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         }
+
+        var modalBody = document.querySelector("#updateStatusModalBody");
+
+        var blockUI = new KTBlockUI(modalBody, {
+            message: `<div class="blockui-message">
+                <span class="spinner-border text-primary"></span> Memproses data...</div>`,
+        });
+
 
         // Search Logic
         const term = @json($term);
@@ -150,6 +160,8 @@ Post
             });
         });
 
+
+
         $("body").on("click", ".detail-content", function() {
             var id = $(this).data("id")
 
@@ -167,7 +179,66 @@ Post
                     $("#detailCoverImage").attr("src", url);
                 }
             })
-        })
+        });
+
+        // Update Status Logic
+        $('body').on('click', '.update-status', function() {
+            var id = $(this).data('id');
+            $.get("backoffice/post/edit" + "/" + id, function(data) {
+                $('#updateStatusModalTitle').html(`Update Status Publish Postingan oleh ${data.member.full_name}`);
+                $('#updateStatusActionModal').modal('show');
+                $('#id').val(data.id);
+
+                if(data.post_status.code != "WT") {
+                    $("#post_status_id").val(data.post_status_id);
+                }
+            })
+        });
+
+        $('#updateStatusEditBtn').click(function (e) {
+            e.preventDefault();
+
+            const post_status_id = $("#post_status_id").val();
+
+            if(post_status_id) {
+                var id = $('#id').val();
+
+                var url = "{{ route('post.update-status', ":id") }}";
+                url = url.replace(':id', id);
+
+                const formData = new FormData();
+
+                formData.append("post_status_id", post_status_id);
+
+                formData.append('_method', 'PUT');
+
+                blockUI.block();
+
+                $.ajax({
+                    data: formData,
+                    url: url,
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: "json",
+                    success: function(data) {
+                        if(data.success == true) {
+                            location.reload();
+                        } else {
+                            blockUI.release();
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function(data) {
+                        console.log('Error : ', data);
+                        blockUI.release();
+                    }
+                })
+            } else {
+                toastr.error("Semua field harus diisi terlebih dahulu sebelum mengupdate data.");
+            }
+        });
     });
 </script>
 @endsection

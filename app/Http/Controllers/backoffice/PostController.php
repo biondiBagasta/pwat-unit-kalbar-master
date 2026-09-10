@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
 use App\Models\PostCategories;
 use App\Models\Posts;
+use App\Models\PostStatuses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,8 +46,9 @@ class PostController extends Controller
         })->take($pageTake)
         ->skip(($currentPage - 1) * $pageTake)->get();
 
-        // Bagian Data User Roles
         $post_categories_data = PostCategories::orderBy("name", "asc")->get();
+        $post_statuses_data = PostStatuses::where("code", "!=", "WT")->orderBy("code", "asc")->get();
+
 
         return view("backoffice.post.index",
         [
@@ -55,6 +57,7 @@ class PostController extends Controller
             "current_page" => $currentPage,
             "count" => $count,
             "total_page" => $totalPage,
+            "post_statuses_data" => $post_statuses_data,
             "term" => $term
         ]);
     }
@@ -87,7 +90,7 @@ class PostController extends Controller
     }
 
     public function edit($id) {
-        $data = Posts::with("post_category", "member")->find($id);
+        $data = Posts::with("post_category", "member", "post_status")->find($id);
 
         return response()->json($data);
     }
@@ -102,9 +105,16 @@ class PostController extends Controller
             $model->hashtag = $request["hashtag"];
             $model->post_category_id = $request["post_category_id"];
             $model->post_status_id = 1;
-            $model->posted_by = Auth::user()->member->id;
 
             if($request["cover_image"]) {
+                if($model->cover_image != null) {
+                    $path = "app/public/post/". $model->cover_image;
+
+                    if(file_exists(storage_path($path))) {
+                        unlink(storage_path($path));
+                    }
+                }
+
                 $filename = time().'_'.$request["cover_image"]->getClientOriginalName();
                 $request["cover_image"]->storeAs("posts", $filename, 'public');
                 $model->cover_image = $filename;
@@ -124,6 +134,14 @@ class PostController extends Controller
         try {
             $model = Posts::find($id);
 
+            if($model->cover_image != null) {
+                $path = "app/public/post/". $model->cover_image;
+
+                if(file_exists(storage_path($path))) {
+                    unlink(storage_path($path));
+                }
+            }
+
             $model->delete();
 
             session()->flash("delete", "Data Post Berhasil Dihapus.");
@@ -131,6 +149,22 @@ class PostController extends Controller
             return ApiResponse::successResponse("");
         } catch(\Throwable $e) {
             return ApiResponse::errorResponse("Gagal Menghapus Data Post : {$e->getMessage()}");
+        }
+    }
+
+    public function updateStatus(Request $request, $id) {
+
+        try {
+            $model = Posts::find($id);
+            $model->post_status_id = $request["post_status_id"];
+
+            $model->save();
+
+            session()->flash("update", "Status Publish Postingan Berhasil Diupdate.");
+
+            return ApiResponse::successResponse("");
+        } catch(\Throwable $e) {
+            return ApiResponse::errorResponse("Gagal Mengupdate Status Publish Postingan : {$e->getMessage()}");
         }
     }
 }
