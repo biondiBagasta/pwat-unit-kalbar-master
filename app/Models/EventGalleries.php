@@ -21,6 +21,6 @@ class EventGalleries extends Model
     }
 
     public function member() {
-        return $this->belongsTo(Members::class, "member_id");
+        return $this->belongsTo(Members::class, "uploaded_by");
     }
 }

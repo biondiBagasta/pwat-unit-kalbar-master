@@ -9,6 +9,7 @@ use App\Models\EventCategories;
 use App\Models\EventGalleries;
 use App\Models\Events;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -135,6 +136,47 @@ class EventController extends Controller
             return ApiResponse::successResponse("");
         } catch(\Throwable $e) {
             return ApiResponse::errorResponse("Gagal Menghapus Data Event : {$e->getMessage()}");
+        }
+    }
+
+    public function uploadGalleriesEventImage(Request $request) {
+        $event_id = $request["event_id"];
+
+        $image_files = $request["image_files"];
+
+        foreach($image_files as $if) {
+            $model = new EventGalleries;
+
+            $filename = time().'_'.$if->getClientOriginalName();
+            $if->storeAs("event_galleries", $filename, 'public');
+            $model->photo = $filename;
+            $model->event_id = $event_id;
+            $model->uploaded_by = Auth::user()->member->id;
+            $model->save();
+        }
+
+        session()->flash("create", "Data Galleries Event Berhasil Ditambahkan.");
+
+        return ApiResponse::successResponse("Data Event Gallery Berhasil Ditambahkan.");
+    }
+
+    public function deleteGallery($id) {
+        try {
+            $model = EventGalleries::find($id);
+
+            $path = "app/public/event_galleries/". $model->photo;
+
+            if(file_exists(storage_path($path))) {
+                unlink(storage_path($path));
+            }
+
+            $model->delete();
+
+            session()->flash("delete", "Data Gallery Event Berhasil Dihapus.");
+
+            return ApiResponse::successResponse("");
+        } catch(\Throwable $e) {
+            return ApiResponse::errorResponse("Gagal Menghapus Data Gallery Event : {$e->getMessage()}");
         }
     }
 }

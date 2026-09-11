@@ -93,6 +93,14 @@ Event
             }
         });
 
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
         // Flatpickr Logic
         var start_date = null;
         var end_date = null;
@@ -361,11 +369,15 @@ Event
             })
         });
 
-        // Detail Content
+        // Gallery Logic
+        let selectedEventId = 0;
+
         $("body").on("click", ".gallery-button", function() {
             var id = $(this).data('id');
             var url = "{{ route('event.edit', ":id") }}";
             url = url.replace(':id', id);
+
+            selectedEventId = Number(id)
 
             $.get(url, function(data) {
                 console.log(data)
@@ -392,10 +404,11 @@ Event
                             <tr>
                                 <td>
                                    <a class="d-block overlay" data-fslightbox="lightbox-basic"
-                                   href="{{ url('/storage/events') }}/${d.photo}">
+                                   href="{{ url('/storage/event_galleries') }}/${d.photo}">
                                         <!--begin::Image-->
-                                        <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-100px"
-                                            style="background-image:url('{{ url('/storage/events') }}/${d.photo}')">
+                                        <div class="overlay-wrapper bgi-no-repeat bgi-position-center
+                                        bgi-size-cover card-rounded min-h-100px"
+                                            style="background-image:url('{{ url('/storage/event_galleries') }}/${d.photo}')">
                                         </div>
                                         <!--end::Image-->
 
@@ -410,11 +423,23 @@ Event
                                     ${d.member.full_name}
                                 </td>
                                 <td>
-                                    ${d.member.full_name}
+                                    ${formatDate(d.created_at)}
+                                </td>
+                                <td>
+                                    <button type="button"
+                                    class="btn btn-danger btn-sm delete-image-button"
+                                    data-id="${d.id}">
+                                        <i class="las la-trash fs-2 me-1"></i>
+                                        Hapus
+                                    </button>
                                 </td>
                             </tr>
                         `
-                    })
+                    });
+
+                    $("#imageFormTbody").html(tbodyHtml)
+
+                    refreshFsLightbox();
                 }
 
 
@@ -428,8 +453,11 @@ Event
             $("#select-image-input").trigger("click");
         });
 
+        let selectedFileList = []
+
         $("#select-image-input").on("change", function() {
-            const files = this.files;
+            const files = [...this.files];
+            selectedFileList = files
 
             let selectedFileHtml = ""
 
@@ -437,20 +465,111 @@ Event
                 const url = URL.createObjectURL(file)
 
                 selectedFileHtml += `
-                    <div class="col-12 col-lg-4">
-                        <div class="symbol symbol-150px symbol-2by3">
-                            <img src="${url}" alt=""/>
-                            <span class="symbol-badge badge badge-circle bg-danger start-100">X</span>
+                    <div class="col-12 col-lg-4" id="selected-image-${index}">
+                        <div class="symbol w-100">
+                            <img src="${url}" class="w-100 h-auto" alt=""/>
+                            <span class="symbol-badge cursor-pointer
+                            badge badge-circle bg-danger start-100 remove-image-button"
+                            data-index="${index}"
+                            >X</span>
                         </div>
                     </div>
                 `
             });
 
             $("#selectedImageBody").html(
-                `<div class="row g-10">
+                `<div class="row g-10 mb-5">
                     ${selectedFileHtml}
-                </div>`
+                </div>
+                <button type="button" class="btn btn-primary w-100 upload-image-button">
+                    <i class="las la-upload fs-2 me-1"></i>
+                    Upload
+                </button>
+                `
             )
+        });
+
+        // Remove Image Logic
+        $("body").on("click", ".remove-image-button", function() {
+            const index = $(this).data("index");
+
+            $(`#selected-image-${index}`).remove()
+            selectedFileList.splice(Number(index), 1);
+
+            if(selectedFileList.length == 0) {
+                $(`#uploadImageButton`).remove();
+            }
+        });
+
+        // Upload Gallery Event image
+        $('body').on('click', '.upload-image-button', function (e) {
+            const formData = new FormData();
+
+            formData.append("event_id", selectedEventId);
+
+            selectedFileList.forEach((file) => {
+                formData.append("image_files[]", file);
+            })
+
+            $.ajax({
+                data: formData,
+                url: "{{ route('event.upload-galleries') }}",
+                type: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    if(data.success == true) {
+                        location.reload();
+                    } else {
+                        toastr.error(data.message);
+                    }
+                    // $('#modalForm').trigger('reset');
+                    // $('#actionModal').modal('hide');
+                    // toastr.success(data.create);
+                    // blockUI.release();
+                    // location.reload();
+                },
+                error: function(data) {
+                    console.log('Error : ', data);
+                }
+            })
+
+        });
+
+        $("body").on("click", ".delete-image-button", function() {
+            var id = $(this).data('id');
+
+            var url = "{{ route('event.delete-gallery', ":id") }}";
+            url = url.replace(':id', id);
+
+            Swal.fire({
+                title: 'Delete Data Event Gallery',
+                text: "Apakah anda yakin ingin menghapus data Event Gallery ini???",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+
+                if(result.value) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        success: function(data) {
+                            if(data.success == true) {
+                                location.reload();
+                            } else {
+                                toastr.error(data.message);
+                            }
+                        },
+                        error: function(data) {
+                            console.log('Error : ', data);
+                        }
+                    });
+                }
+            });
         })
     });
 </script>

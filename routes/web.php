@@ -136,6 +136,9 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::get("event/edit/{id}", [EventController::class, "edit"])->name("event.edit");
     Route::delete("event/delete/{id}", [EventController::class, "delete"])->name("event.delete");
 
+    Route::post("event/upload-galleries", [EventController::class, "uploadGalleriesEventImage"])->name("event.upload-galleries");
+    Route::delete("event/delete-gallery/{id}", [EventController::class, "deleteGallery"])->name("event.delete-gallery");
+
     // Finance Category Route
     Route::post("finance-category/create", [FinanceCategoryController::class, "create"])->name("finance-category.create");
     Route::get("finance-category/edit/{id}", [FinanceCategoryController::class, "edit"])->name("finance-category.edit");
