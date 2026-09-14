@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $recepient
  * @property \Carbon\Carbon $letter_date
  * @property string $signature
- * @property string $attachment
+ * @property int $readed
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
@@ -34,5 +34,9 @@ class Correspondences extends Model
 
     public function recepient_data() {
         return $this->belongsTo(Members::class, "recepient", "recepient_data");
+    }
+
+    public function correspondence_attachments() {
+        return $this->hasMany(CorrespondenceAttachments::class);
     }
 }

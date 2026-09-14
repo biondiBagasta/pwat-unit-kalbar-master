@@ -109,14 +109,6 @@ class EventController extends Controller
             if($model->event_galleries()->exists()) {
                 $galleries = EventGalleries::where("event_id", "=", $model->id)->get();
 
-                for($i = 0; $i < count($galleries); $i++) {
-                    $path = "app/public/event-galleries/". $galleries[$i]->photo;
-
-                    if(file_exists(storage_path($path))) {
-                        unlink(storage_path($path));
-                    }
-                }
-
                 $galleries->each(function ($gallery) {
                     $path = "app/public/event-galleries/". $gallery->photo;
 

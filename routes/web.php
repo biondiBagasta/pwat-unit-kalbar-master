@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\backoffice\CarouselController;
+use App\Http\Controllers\backoffice\CorrespondenceCategoryController;
 use App\Http\Controllers\backoffice\DashboardController;
 use App\Http\Controllers\backoffice\EventCategoryController;
 use App\Http\Controllers\backoffice\EventController;
@@ -156,4 +157,10 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::get("member-profile/overview/{id}", [MemberProfileController::class, "overviewPage"])->name("member-profile.overview");
     Route::get("member-profile/post/{id}", [MemberProfileController::class, "postPage"])->name("member-profile.post");
     Route::get("member-profile/suggestion/{id}", [MemberProfileController::class, "suggestionPage"])->name("member-profile.suggestion");
+
+    // Kategori Surat Menyurat Route
+    Route::post("correspondence-category/create", [CorrespondenceCategoryController::class, "create"])->name("correspondence-category.create");
+    Route::get("correspondence-category/edit/{id}", [CorrespondenceCategoryController::class, "edit"])->name("corresponcence-category.edit");
+    Route::put("correspondence-category/update/{id}", [CorrespondenceCategoryController::class, "update"])->name("correspondence-category.update");
+    Route::delete("correspondence-category/delete/{id}", [CorrespondenceCategoryController::class, "delete"])->name("correspondence-category.delete");
 });
