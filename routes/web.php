@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\backoffice\CarouselController;
 use App\Http\Controllers\backoffice\CorrespondenceCategoryController;
+use App\Http\Controllers\backoffice\CorrespondenceController;
 use App\Http\Controllers\backoffice\DashboardController;
 use App\Http\Controllers\backoffice\EventCategoryController;
 use App\Http\Controllers\backoffice\EventController;
@@ -163,4 +164,11 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::get("correspondence-category/edit/{id}", [CorrespondenceCategoryController::class, "edit"])->name("corresponcence-category.edit");
     Route::put("correspondence-category/update/{id}", [CorrespondenceCategoryController::class, "update"])->name("correspondence-category.update");
     Route::delete("correspondence-category/delete/{id}", [CorrespondenceCategoryController::class, "delete"])->name("correspondence-category.delete");
+
+    // Surat Menyurat
+    Route::get("correspondence", [CorrespondenceController::class, "index"])->name("correspondence.index");
+    Route::post("correspondence/create", [CorrespondenceController::class, "create"])->name("correspondence.create");
+    Route::put("correspondence/update/{id}", [CorrespondenceController::class, "update"])->name("correspondence.update");
+    Route::get("correspondence/edit/{id}", [CorrespondenceController::class, "edit"])->name("correspondence.edit");
+    Route::delete("correspondence/delete/{id}", [CorrespondenceController::class, "delete"])->name("correspondence.delete");
 });

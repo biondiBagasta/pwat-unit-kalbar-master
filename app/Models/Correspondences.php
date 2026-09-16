@@ -29,11 +29,11 @@ class Correspondences extends Model
     }
 
     public function sender_data() {
-        return $this->belongsTo(Members::class, "sender", "sender_data");
+        return $this->belongsTo(Members::class, "sender");
     }
 
     public function recepient_data() {
-        return $this->belongsTo(Members::class, "recepient", "recepient_data");
+        return $this->belongsTo(Members::class, "recepient");
     }
 
     public function correspondence_attachments() {

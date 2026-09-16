@@ -171,6 +171,7 @@
 		<!--begin::Global Javascript Bundle(mandatory for all pages)-->
 		<script src="{{ asset('theme/plugins/global/plugins.bundle.js') }}"></script>
 		<script src="{{ asset('theme/js/scripts.bundle.js') }}"></script><!--end::Javascript-->
+        <script src="https://cdn.jsdelivr.net/npm/signature_pad@5.1.4/dist/signature_pad.umd.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="{{ asset('theme/plugins/custom/datatables/datatables.bundle.js') }}"></script>
         <script src="{{ asset('theme/plugins/custom/fslightbox/fslightbox.bundle.js') }}"></script>
@@ -178,7 +179,6 @@
         <script src="{{ asset('theme/js/debounce.js') }}"></script>
         <script src="{{ asset('theme/js/dayjs.min.js') }}"></script>
         <script src="{{ asset('theme/js/highmaps.js') }}"></script>
-
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
 

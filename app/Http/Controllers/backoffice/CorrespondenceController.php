@@ -8,6 +8,7 @@ use App\Http\Requests\CorrespondenceRequest;
 use App\Models\CorrespondenceAttachments;
 use App\Models\CorrespondenceCategories;
 use App\Models\Correspondences;
+use App\Models\Members;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +62,8 @@ class CorrespondenceController extends Controller
 
         $correspondence_categories_data = CorrespondenceCategories::orderBy("name", "asc")->get();
 
+        $members_data = Members::orderBy("full_name", "asc")->get();
+
 
         return view("backoffice.correspondence.index",
         [
@@ -69,7 +72,8 @@ class CorrespondenceController extends Controller
             "current_page" => $currentPage,
             "count" => $count,
             "total_page" => $totalPage,
-            "term" => $term
+            "term" => $term,
+            "members_data" => $members_data
         ]);
     }
 

@@ -159,6 +159,28 @@
 
                 <div class="menu-item pt-5">
                     <div class="menu-content">
+                        <span class="menu-heading fw-bold text-uppercase fs-7">Kelola Data Surat Menyurat</span>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <!--begin:Menu link-->
+                    <a class="
+                    {{ request()->route()->named('correspondence.index') ?
+                    'menu-link active' : 'menu-link' }}"
+                    href="{{ route('correspondence.index') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/abstract/abs014.svg-->
+                            <i class="las la-envelope fs-1 text-light"></i>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Surat Menyurat</span>
+                    </a>
+                    <!--end:Menu link-->
+                </div>
+
+                <div class="menu-item pt-5">
+                    <div class="menu-content">
                         <span class="menu-heading fw-bold text-uppercase fs-7">Kelola Data Keuangan</span>
                     </div>
                 </div>
