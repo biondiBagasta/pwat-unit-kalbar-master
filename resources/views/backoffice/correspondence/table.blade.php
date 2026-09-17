@@ -19,6 +19,7 @@
                     <td>
                         {{ $d->letter_number }}
                     </td>
+                    <td>{{ $d->subject }}</td>
                     <td>{{ \Carbon\Carbon::parse($d->letter_date)->format('d F Y') }}</td>
                     <td>{{ $d->recepient_data->full_name }}</td>
                     <td>{{ $d->sender_data->full_name }}</td>
@@ -27,15 +28,6 @@
                         data-id="{{ $d->id }}">
                             <div class="d-flex flex-row gap-2">
                                 <i class="las la-eye fs-2"></i>
-                                <div>Lihat</div>
-                            </div>
-                        </button>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-dark gallery-button"
-                        data-id="{{ $d->id }}">
-                            <div class="d-flex flex-row gap-2">
-                                <i class="las la-image fs-2"></i>
                                 <div>Lihat</div>
                             </div>
                         </button>

@@ -13,6 +13,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class CorrespondenceAttachments extends Model
 {
+    protected $table = "correspondence_attachements";
+
+    public $timestamps = false;
+
     public function correspondence() {
         return $this->belongsTo(Correspondences::class, "correspondence_id");
     }

@@ -62,7 +62,9 @@ class CorrespondenceController extends Controller
 
         $correspondence_categories_data = CorrespondenceCategories::orderBy("name", "asc")->get();
 
-        $members_data = Members::orderBy("full_name", "asc")->get();
+        $members_data = Members::where(
+            "user_id", "!=", Auth::user()->id
+        )->orderBy("full_name", "asc")->get();
 
 
         return view("backoffice.correspondence.index",
@@ -224,7 +226,7 @@ class CorrespondenceController extends Controller
             return ApiResponse::successResponse("");
         } catch(\Throwable $e) {
             DB::rollBack();
-            return ApiResponse::errorResponse("Gagal Membuat Surat : {$e->getMessage()}");
+            return ApiResponse::errorResponse("Gagal Mengupdate Surat : {$e->getMessage()}");
         }
     }
 
@@ -232,7 +234,7 @@ class CorrespondenceController extends Controller
         try {
             $model = Correspondences::with("correspondence_attachments")->find($id);
 
-            if($model->correspondence_attachments->exists()) {
+            if($model->correspondence_attachments->isNotEmpty()) {
                 $attachments = CorrespondenceAttachments::where("correspondence_id", "=", $model->id)->get();
 
                 $attachments->each(function ($at) {
@@ -246,7 +248,7 @@ class CorrespondenceController extends Controller
                 });
             }
 
-            $signature_path = "app/public/signatures/". $model->cover_image;
+            $signature_path = "app/public/signatures/". $model->signature;
 
             if(file_exists(storage_path($signature_path))) {
                 unlink(storage_path($signature_path));

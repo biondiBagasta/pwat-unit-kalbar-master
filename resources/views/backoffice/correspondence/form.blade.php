@@ -64,14 +64,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="name" class="control-label col-form-label">Subject</label>
+                        <label for="subject" class="control-label col-form-label">Subject</label>
                         <div class="input-group mb-5">
                             <span class="input-group-text" id="basic-addon3">
                                 <i class="las la-tag fs-2"></i>
                             </span>
                             <input type="text"
-                            class="form-control" id="name"
-                            name="name" aria-describedby="basic-addon3" />
+                            class="form-control" id="subject"
+                            name="subject" aria-describedby="basic-addon3" />
                         </div>
                     </div>
 
@@ -102,19 +102,26 @@
                         </button>
                     </div>
 
+                    <h2 class="my-4">
+                        Lampiran
+                    </h2>
+
+                    <ul id="currentLampiranContainer" class="my-4 d-none list-group"></ul>
+
+                    <button type="button" class="btn btn-dark btn-sm mb-4" id="addLampiranButton">
+                        <i class="las la-paperclip fs-2 me-1"></i>
+                        <span id="lampiranButtonLabel"></span>
+                    </button>
+
                     <div class="d-flex flex-column gap-4">
-                       <button type="button" class="btn btn-secondary" id="addLampiranButton">
-                            <i class="las la-paperclip fs-2 me-1"></i>
-                            Tambahkan Lampiran
-                        </button>
 
                         <div id="belum-pilih-lampiran-message">
                             <div class="alert alert-info p-5 my-3">
                                 <div class="d-flex flex-row gap-3 align-items-center">
-                                    <i class="las la-info-circle fs-1 text-success">
+                                    <i class="las la-info-circle fs-1 text-info">
 
                                     </i>
-                                    <h5 class="mt-2">
+                                    <h5 class="mt-2 text-info">
                                         Anda tidak menggunakan lampiran.
                                     </h5>
                                 </div>
@@ -122,48 +129,6 @@
                         </div>
 
                         <div class="d-flex flex-column gap-4 w-100" id="lampiran-container">
-                            <div class="d-flex flex-column w-100">
-                                <div class="fs-2 fw-semibold">
-                                    Lampiran Ke-1
-                                </div>
-                                <div class="form-group">
-                                    <label for="attachment_name"
-                                    class="control-label col-form-label">Nama Berkas</label>
-                                    <div class="input-group mb-5">
-                                        <span class="input-group-text" id="basic-addon3">
-                                            <i class="las la-tag fs-2"></i>
-                                        </span>
-                                        <input type="text"
-                                        class="form-control" id="attachment_name_1"
-                                        name="attachment_name_1" aria-describedby="basic-addon3" />
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="name" class="control-label col-form-label">
-                                        File Berkas
-                                    </label>
-                                    <div class="input-group mb-5">
-                                        <span class="input-group-text" id="basic-addon3">
-                                            <i class="las la-file fs-2"></i>
-                                        </span>
-                                        <input type="file"
-                                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-                                        class="form-control" id="attachment_file_1"
-                                        name="attachment_file_1"
-                                        aria-describedby="basic-addon3" />
-                                    </div>
-                                </div>
-
-                                <button type="button" class="w-100 btn btn-small btn-danger"
-                                    id="delete-attachment-1">
-                                    Hapus
-                                </button>
-
-                                <hr class="my-3" />
-                            </div>
-
-
                         </div>
                     </div>
                 </form>

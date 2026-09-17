@@ -48,7 +48,7 @@ Surat Menyurat
                 <h2 class="card-title mb-5">Data Surat Menyurat</h2>
 
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                    <button type="button" class="btn btn-primary" id="tambahButton">
+                    <button type="button" class="btn btn-primary" id="createButton">
                         <i class="las la-plus-circle fs-2 me-1"></i>
                         Tambah Data
                     </button>
@@ -165,6 +165,19 @@ Surat Menyurat
         $('#actionModal').on('shown.bs.modal', function () {
             resizeCanvas();
         });
+
+        async function dataUrlToFile(dataUrl, fileName) {
+            const response = await fetch(dataUrl);
+            const blob = await response.blob();
+
+            return new File(
+                [blob],
+                fileName,
+                {
+                    type: blob.type
+                }
+            );
+        }
         // End Signature Pad Logic
 
         toastr.options = {
@@ -186,7 +199,121 @@ Surat Menyurat
         }
 
         // Logic Tambah Berkas
+        let lampiranList = [];
 
+        // Logic Ketika Button di Tambah di Klik
+        $("#addLampiranButton").on("click", function() {
+            if(lampiranList.length == 0) {
+                $("#belum-pilih-lampiran-message").addClass("d-none")
+                $("#lampiran-container").removeClass("d-none");
+            }
+
+
+            let index = lampiranList.length;
+
+            $("#lampiran-container").append(
+                `
+                <div class="d-flex flex-column w-100 attachment-item" data-index="${index}">
+                    <div class="fs-2 fw-semibold">
+                        Lampiran Ke-${index + 1}
+                    </div>
+                    <div class="form-group">
+                        <label for="attachment_name_${index}"
+                        class="control-label col-form-label">Nama Berkas</label>
+                        <div class="input-group mb-5">
+                            <span class="input-group-text" id="basic-addon3">
+                                <i class="las la-tag fs-2"></i>
+                            </span>
+                            <input type="text"
+                            class="form-control attachment-name" id="attachment_name_${index}"
+                            name="attachment_name_${index}"
+                            aria-describedby="basic-addon3" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="attachment_file_${index}" class="control-label col-form-label">
+                            File Berkas
+                        </label>
+                        <div class="input-group mb-5">
+                            <span class="input-group-text" id="basic-addon3">
+                                <i class="las la-file fs-2"></i>
+                            </span>
+                            <input type="file"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                            class="form-control attachment-file" id="attachment_file_${index}"
+                            name="attachment_file_${index}"
+                            aria-describedby="basic-addon3" />
+                        </div>
+                    </div>
+
+                    <button type="button" class="w-100 btn btn-small btn-danger delete-attachment"
+                        id="delete-attachment-${index}"
+                        data-index="${index}">
+                        Hapus
+                    </button>
+
+                    <hr class="my-3" />
+                </div>
+                `
+            );
+
+            let initialData = {
+                name: null,
+                file: null,
+            }
+
+            lampiranList.push(initialData);
+        });
+
+        $(document).on("change", ".attachment-name, .attachment-file", function () {
+
+            let index = $(this).closest(".attachment-item").data("index");
+
+            if ($(this).hasClass("attachment-name")) {
+                lampiranList[index].name = $(this).val();
+            }
+
+            if ($(this).hasClass("attachment-file")) {
+                lampiranList[index].file = this.files[0] ?? null;
+            }
+        });
+
+        $(document).on("click", ".delete-attachment", function() {
+            let index = $(this).data("index");
+
+            lampiranList.splice(index, 1)
+
+            // Hapus element dari DOM
+            $(this).closest(".attachment-item").remove();
+
+            // Re-index
+            $("#lampiran-container .attachment-item").each(function (newIndex) {
+
+                $(this).attr("data-index", newIndex);
+                $(this).data("index", newIndex);
+
+                $(this).find(".attachment-name")
+                    .attr("id", `attachment_name_${newIndex}`)
+                    .attr("name", `attachment_name_${newIndex}`);
+
+                $(this).find(".attachment-file")
+                    .attr("id", `attachment_file_${newIndex}`)
+                    .attr("name", `attachment_file_${newIndex}`);
+
+                $(this).find(".delete-attachment")
+                    .attr("data-index", newIndex)
+                    .data("index", newIndex);
+
+                $(this).find(".fs-2.fw-semibold")
+                    .text(`Lampiran Ke-${newIndex + 1}`);
+            });
+
+            // Kalau sudah tidak ada lampiran
+            if (lampiranList.length === 0) {
+                $("#belum-pilih-lampiran-message").removeClass("d-none");
+            }
+        })
         // ENd logic Tambah Berkas.
 
         var modalBody = document.querySelector("#modalBody");
@@ -215,28 +342,52 @@ Surat Menyurat
 
 
         // Create Logic
-        $('#tambahButton').click(function () {
+        $('#createButton').click(function () {
             $('#saveBtn').show();
             $('#editBtn').hide();
+
+            $("#lampiranButtonLabel").text("Tambahkan Lampiran");
+            $("#currentLampiranContainer").addClass("d-none");
+            $("#currentLampiranContainer").html("");
+
+            if(lampiranList.length > 0) {
+                lampiranList = [];
+                $("#belum-pilih-lampiran-message").removeClass("d-none");
+                $("#lampiran-container").addClass("d-none");
+                $("#lampiran-container").html("")
+            }
+
             $('#id').val('');
             $('#modalForm').trigger('reset');
             $('#modalTitle').html('Tambah Data Surat Menyurat');
             $('#actionModal').modal('show');
         });
 
-        $('#saveBtn').click(function (e) {
+        $('#saveBtn').click(async function (e) {
             e.preventDefault();
 
             const subject = $("#subject").val();
             const content = contentQuill.root.innerHTML;
             const correspondence_category_id = $("#correspondence_category_id").val();
-            const signature = signaturePad.toDataURL('image/png');
+
+            const isSignaturePadEmpty = signaturePad.isEmpty();
+            const signatureString = signaturePad.toDataURL('image/png');
+            const signature = await dataUrlToFile(
+                signatureString,
+                "signature.png"
+            );
+
             const recepient = $("#recepient").val();
+
+            const isValidLampiran = lampiranList.every(item =>
+                item.name !== null &&
+                item.file !== null
+            );
 
             // Belum Attachement
 
-            if(subject && content && correspondence_category_id && signature && recepient
-                && letter_date
+            if(subject && content && correspondence_category_id && !isSignaturePadEmpty && recepient
+                && letter_date && isValidLampiran
             ) {
                 blockUI.block();
                 const formData = new FormData();
@@ -248,6 +399,20 @@ Surat Menyurat
                 formData.append("signature", signature)
                 formData.append("recepient", recepient)
 
+                if(lampiranList.length > 0) {
+                    lampiranList.forEach((item, index) => {
+                        formData.append(
+                            `attachments[${index}][name]`,
+                            item.name
+                        );
+
+                        formData.append(
+                            `attachments[${index}][file]`,
+                            item.file
+                        );
+                    });
+                }
+
                 $.ajax({
                     data: formData,
                     url: "{{ route('correspondence.create') }}",
@@ -257,6 +422,12 @@ Surat Menyurat
                     processData: false,
                     success: function(data) {
                         if(data.success == true) {
+                            if(lampiranList.length > 0) {
+                                $("#belum-pilih-lampiran-message").removeClass("d-none");
+                            }
+
+                            $("#lampiran-container").html("");
+                            lampiranList = []
                             location.reload();
                         } else {
                             blockUI.release();
@@ -292,28 +463,92 @@ Surat Menyurat
                 $("#subject").val(data.subject);
                 $("#content").val(data.content);
                 $("#correspondence_category_id").val(data.correspondence_category_id);
-                $("#recepient").val(data.recepient)
+
+                const recepientElement = $("#recepient");
+
+                // Pastikan selectpicker sudah aktif
+                recepientElement.selectpicker();
+
+                // Set value
+                recepientElement.selectpicker("val", String(data.recepient));
+
+
                 contentQuill.root.innerHTML = data.content;
 
                 $("#letter_date")[0]._flatpickr.setDate(data.letter_date);
 
                 letter_date = data.letter_date;
+
+                // Logic Update Surat
+                if(lampiranList.length > 0) {
+                    lampiranList = [];
+                    $("#belum-pilih-lampiran-message").removeClass("d-none");
+                    $("#lampiran-container").addClass("d-none");
+                    $("#lampiran-container").html("")
+                }
+
+                if(data.correspondence_attachments.length > 0) {
+                    $("#lampiranButtonLabel").text("Ganti Lampiran");
+                    $("#belum-pilih-lampiran-message").addClass("d-none");
+                    $("#currentLampiranContainer").removeClass("d-none");
+
+                    const urlStorage = "{{ url('/storage/attachments/') }}";
+
+                    let attachmentListHtml = ``
+
+                    data.correspondence_attachments.forEach(function (d, index) {
+                        attachmentListHtml += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${d.name}
+                            <a href="${urlStorage}/${d.file_name}" class="btn btn-light-dark btn-sm edit-download-attachment"
+                            data-filename="${d.file_name}">
+                                <i class="las la-download fs-2 me-1"></i>
+                                Download
+                            </a>
+                        </li>
+                        `
+
+                    });
+
+                    $("#currentLampiranContainer").html(
+                        attachmentListHtml
+                    )
+                } else {
+                    $("#lampiranButtonLabel").text("Tambah Lampiran");
+                    $("#belum-pilih-lampiran-message").removeClass("d-none");
+                    $("#currentLampiranContainer").html("");
+                    $("#currentLampiranContainer").addClass("d-none");
+                }
             })
         });
 
-        $('#editBtn').click(function (e) {
+        $('#editBtn').click(async function (e) {
             e.preventDefault();
 
             const subject = $("#subject").val();
             const content = contentQuill.root.innerHTML;
             const correspondence_category_id = $("#correspondence_category_id").val();
-            const signature = signaturePad.toDataURL('image/png');
+
+            const isSignaturePadEmpty = signaturePad.isEmpty();
+            const signatureString = signaturePad.toDataURL('image/png');
+
+            const signature = await dataUrlToFile(
+                signatureString,
+                "signature.png"
+            );
+
+
             const recepient = $("#recepient").val();
+
+            const isValidLampiran = lampiranList.every(item =>
+                item.name !== null &&
+                item.file !== null
+            );
 
             // Belum Attachement
 
             if(subject && content && correspondence_category_id && recepient
-                && letter_date
+                && letter_date && isValidLampiran
             ) {
                 blockUI.block();
                 const formData = new FormData();
@@ -322,8 +557,24 @@ Surat Menyurat
                 formData.append("content", content);
                 formData.append("correspondence_category_id", correspondence_category_id);
                 formData.append("letter_date", letter_date)
-                if(signature) {
+
+                if(!isSignaturePadEmpty) {
                     formData.append("signature", signature)
+                }
+
+
+                if(lampiranList.length > 0) {
+                    lampiranList.forEach((item, index) => {
+                        formData.append(
+                            `attachments[${index}][name]`,
+                            item.name
+                        );
+
+                        formData.append(
+                            `attachments[${index}][file]`,
+                            item.file
+                        );
+                    });
                 }
 
                 formData.append("recepient", recepient)
@@ -408,209 +659,6 @@ Surat Menyurat
             //     $('#detailContentModal').modal('show');
             // })
         });
-
-        // Gallery Logic
-        let selectedEventId = 0;
-
-        $("body").on("click", ".gallery-button", function() {
-            var id = $(this).data('id');
-            var url = "{{ route('event.edit', ":id") }}";
-            url = url.replace(':id', id);
-
-            selectedEventId = Number(id)
-
-            $.get(url, function(data) {
-                console.log(data)
-                $('#imageFormModalTitle').html(`Gallery Event ${data.name}`);
-
-                if(data.event_galleries.length == 0) {
-                    $("#imageFormAlert").html(
-                        `<div class="alert alert-danger d-flex align-items-center p-5">
-                            <i class="las la-exclamation-triangle fs-2hx text-danger me-4">
-
-                            </i>
-                            <div class="d-flex flex-column">
-                                <!--begin::Title-->
-                                <h4 class="mt-3 text-dark">Belum Ada Gallery untuk Event ini.</h4>
-                            </div>
-                            <!--end::Wrapper-->
-                        </div>`
-                    )
-                } else {
-                    let tbodyHtml = "";
-
-                    $.each(data.event_galleries, function(index, d) {
-                        tbodyHtml += `
-                            <tr>
-                                <td>
-                                   <a class="d-block overlay" data-fslightbox="lightbox-basic"
-                                   href="{{ url('/storage/event_galleries') }}/${d.photo}">
-                                        <!--begin::Image-->
-                                        <div class="overlay-wrapper bgi-no-repeat bgi-position-center
-                                        bgi-size-cover card-rounded min-h-100px"
-                                            style="background-image:url('{{ url('/storage/event_galleries') }}/${d.photo}')">
-                                        </div>
-                                        <!--end::Image-->
-
-                                        <!--begin::Action-->
-                                        <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow">
-                                            <i class="bi bi-eye-fill text-white fs-3x"></i>
-                                        </div>
-                                        <!--end::Action-->
-                                    </a>
-                                </td>
-                                <td>
-                                    ${d.member.full_name}
-                                </td>
-                                <td>
-                                    ${formatDate(d.created_at)}
-                                </td>
-                                <td>
-                                    <button type="button"
-                                    class="btn btn-danger btn-sm delete-image-button"
-                                    data-id="${d.id}">
-                                        <i class="las la-trash fs-2 me-1"></i>
-                                        Hapus
-                                    </button>
-                                </td>
-                            </tr>
-                        `
-                    });
-
-                    $("#imageFormTbody").html(tbodyHtml)
-
-                    refreshFsLightbox();
-                }
-
-
-                $('#imageFormModal').modal('show');
-            })
-        });
-
-        // Select Image Logic
-
-        $("#addImageButton").on("click", function() {
-            $("#select-image-input").trigger("click");
-        });
-
-        let selectedFileList = []
-
-        $("#select-image-input").on("change", function() {
-            const files = [...this.files];
-            selectedFileList = files
-
-            let selectedFileHtml = ""
-
-            $.each(this.files, function(index, file) {
-                const url = URL.createObjectURL(file)
-
-                selectedFileHtml += `
-                    <div class="col-12 col-lg-4" id="selected-image-${index}">
-                        <div class="symbol w-100">
-                            <img src="${url}" class="w-100 h-auto" alt=""/>
-                            <span class="symbol-badge cursor-pointer
-                            badge badge-circle bg-danger start-100 remove-image-button"
-                            data-index="${index}"
-                            >X</span>
-                        </div>
-                    </div>
-                `
-            });
-
-            $("#selectedImageBody").html(
-                `<div class="row g-10 mb-5">
-                    ${selectedFileHtml}
-                </div>
-                <button type="button" class="btn btn-primary w-100 upload-image-button">
-                    <i class="las la-upload fs-2 me-1"></i>
-                    Upload
-                </button>
-                `
-            )
-        });
-
-        // Remove Image Logic
-        $("body").on("click", ".remove-image-button", function() {
-            const index = $(this).data("index");
-
-            $(`#selected-image-${index}`).remove()
-            selectedFileList.splice(Number(index), 1);
-
-            if(selectedFileList.length == 0) {
-                $(`#uploadImageButton`).remove();
-            }
-        });
-
-        // Upload Gallery Event image
-        $('body').on('click', '.upload-image-button', function (e) {
-            const formData = new FormData();
-
-            formData.append("event_id", selectedEventId);
-
-            selectedFileList.forEach((file) => {
-                formData.append("image_files[]", file);
-            })
-
-            $.ajax({
-                data: formData,
-                url: "{{ route('event.upload-galleries') }}",
-                type: "POST",
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(data) {
-                    if(data.success == true) {
-                        location.reload();
-                    } else {
-                        toastr.error(data.message);
-                    }
-                    // $('#modalForm').trigger('reset');
-                    // $('#actionModal').modal('hide');
-                    // toastr.success(data.create);
-                    // blockUI.release();
-                    // location.reload();
-                },
-                error: function(data) {
-                    console.log('Error : ', data);
-                }
-            })
-
-        });
-
-        $("body").on("click", ".delete-image-button", function() {
-            var id = $(this).data('id');
-
-            var url = "{{ route('event.delete-gallery', ":id") }}";
-            url = url.replace(':id', id);
-
-            Swal.fire({
-                title: 'Delete Data Event Gallery',
-                text: "Apakah anda yakin ingin menghapus data Event Gallery ini???",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes'
-            }).then((result) => {
-
-                if(result.value) {
-                    $.ajax({
-                        type: "DELETE",
-                        url: url,
-                        success: function(data) {
-                            if(data.success == true) {
-                                location.reload();
-                            } else {
-                                toastr.error(data.message);
-                            }
-                        },
-                        error: function(data) {
-                            console.log('Error : ', data);
-                        }
-                    });
-                }
-            });
-        })
     });
 </script>
 @endsection

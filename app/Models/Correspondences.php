@@ -37,6 +37,6 @@ class Correspondences extends Model
     }
 
     public function correspondence_attachments() {
-        return $this->hasMany(CorrespondenceAttachments::class);
+        return $this->hasMany(CorrespondenceAttachments::class, "correspondence_id");
     }
 }

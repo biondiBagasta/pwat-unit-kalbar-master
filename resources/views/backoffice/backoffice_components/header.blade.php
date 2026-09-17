@@ -279,11 +279,6 @@
             <!--begin::Messages-->
             <div class="scroll-y me-n5 pe-5" data-kt-element="messages" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_drawer_chat_messenger_header, #kt_drawer_chat_messenger_footer" data-kt-scroll-wrappers="#kt_drawer_chat_messenger_body" data-kt-scroll-offset="0px">
 
-                <!-- Content Section -->
-                <button type="button" class="btn btn-primary" id="createButton">
-                    <i class="las la-envelope fs-2 me-1"></i>
-                    Buat Surat
-                </button>
 
             </div>
             <!--end::Messages-->
