@@ -175,7 +175,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="{{ asset('theme/plugins/custom/datatables/datatables.bundle.js') }}"></script>
         <script src="{{ asset('theme/plugins/custom/fslightbox/fslightbox.bundle.js') }}"></script>
-        <script src="{{ asset('theme/js/underscore.min.js') }}"></script>
+        {{-- <script src="{{ asset('theme/js/underscore.min.js') }}"></script> --}}
         <script src="{{ asset('theme/js/debounce.js') }}"></script>
         <script src="{{ asset('theme/js/dayjs.min.js') }}"></script>
         <script src="{{ asset('theme/js/highmaps.js') }}"></script>
@@ -187,6 +187,83 @@
         @yield('script-child')
 
         @yield("script-child-second")
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                function formatDateIndonesia(date) {
+                    return new Intl.DateTimeFormat('id-ID', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric'
+                    }).format(new Date(date));
+                }
+                // Bagian Surat Masuk
+                $.get("{{ route('correspondence.history-user') }}", function (data) {
+
+                    let historyElementData = '';
+
+                    if(data.length == 0) {
+                        historyElementData += `
+                            <div class="alert alert-info d-flex align-items-center p-5 mb-5">
+                                <i class="las la-info-circle fs-2hx text-primary me-4">
+
+                                </i>
+                                <div class="d-flex flex-column">
+                                    <h4 class="mb-1 text-primary">Tidak Ada Data Surat Masuk</h4>
+                                </div>
+                            </div>
+                        `
+
+                        $("#historySuratContainer").html(historyElementData)
+                    } else {
+                        data.forEach(function (d, index) {
+                            var url = "{{ route('correspondence.pdf', ":id") }}";
+                            url = url.replace(':id', d.id);
+                            console.log(url)
+                            historyElementData += `<a
+                            href="${url}"
+                            target="_blank"
+                            class="card cursor-pointer">
+                                <div class="${d.readed == 0 ? 'card-body bg-light-primary' : 'card-body bg-light-success'}">
+                                    <div class="d-flex flex-row align-items-center justify-content-between gap-6">
+                                        <div class="d-flex flex-row align-items-center gap-6">
+                                            <div class="symbol symbol-50px">
+                                                <div class="${d.readed == 0 ? 'symbol-label bg-primary' : 'symbol-label bg-success'}">
+                                                    <i class="${d.readed == 0 ? 'las la-envelope text-white' : 'las la-envelope-open text-white'}" style="font-size: 3rem"></i>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="fs-2 fw-semibold">
+                                                    ${d.subject}
+                                                </div>
+                                                <div>
+                                                    <span>
+                                                        <i class="las la-user fs-2"></i>
+                                                    </span>
+                                                    <span>
+                                                        ${d.sender_data.full_name}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="fs-6 text-dark">
+                                            ${formatDateIndonesia(d.letter_date)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>`
+                        });
+
+                        $("#historySuratContainer").html(historyElementData)
+                    }
+
+
+                });
+            })
+        </script>
 	</body>
 	<!--end::Body-->
 </html>

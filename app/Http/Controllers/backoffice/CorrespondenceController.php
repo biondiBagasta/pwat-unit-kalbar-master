@@ -12,6 +12,7 @@ use App\Models\Members;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CorrespondenceController extends Controller
 {
@@ -264,19 +265,56 @@ class CorrespondenceController extends Controller
         }
     }
 
-    // public function updateReadStatus($id) {
+    // Bagian History
+    public function historyUser() {
+        if(Auth::user()->member->exists()) {
+            $data = Correspondences::with('sender_data', 'recepient_data', 'correspondence_category')->where("recepient", "=", Auth::user()->member->id)
+            ->orderBy("created_at", "desc")
+            ->get();
 
-    //     try {
-    //         $model = Correspondences::find($id);
-    //         $model->readed = 1;
+            return $data;
+        } else {
+            $data = Correspondences::with('sender_data', 'recepient_data', 'correspondence_category')->where("recepient", "=", 0)
+            ->orderBy("created_at", "desc")
+            ->get();
 
-    //         $model->save();
+            return $data;
+        }
+    }
 
-    //         session()->flash("update", "Status Publish Postingan Berhasil Diupdate.");
+    public function detailSurat($id) {
 
-    //         return ApiResponse::successResponse("");
-    //     } catch(\Throwable $e) {
-    //         return ApiResponse::errorResponse("Gagal Mengupdate Status Publish Postingan : {$e->getMessage()}");
-    //     }
-    // }
+        $data = Correspondences::with('sender_data', 'recepient_data', 'correspondence_category')->find($id);
+
+        if(Auth::user()->member->exists()) {
+            if(Auth::user()->member->id == $data->recepient) {
+                $data->readed = 1;
+                $data->save();
+            }
+        }
+
+        return view("backoffice.correspondence.correspondence_detail.index", [
+            "data" => $data
+        ]);
+    }
+
+    public function pdfSurat($id)
+    {
+        $data = Correspondences::with(
+            'sender_data',
+            'recepient_data',
+            'correspondence_category'
+        )->findOrFail($id);
+
+        $pdf = Pdf::loadView(
+            'backoffice.correspondence.correspondence_detail.pdf',
+            [
+                'data' => $data
+            ]
+        );
+
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('surat-' . $data->id . '.pdf');
+    }
 }

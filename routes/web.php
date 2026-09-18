@@ -171,4 +171,8 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::put("correspondence/update/{id}", [CorrespondenceController::class, "update"])->name("correspondence.update");
     Route::get("correspondence/edit/{id}", [CorrespondenceController::class, "edit"])->name("correspondence.edit");
     Route::delete("correspondence/delete/{id}", [CorrespondenceController::class, "delete"])->name("correspondence.delete");
+
+    Route::get("correspondence/history-user", [CorrespondenceController::class, "historyUser"])->name("correspondence.history-user");
+    Route::get("correspondence/detail/{id}", [CorrespondenceController::class, "detailSurat"])->name("correspondence.detail");
+    Route::get("correspondence/pdf-surat/{id}", [CorrespondenceController::class, "pdfSurat"])->name("correspondence.pdf");
 });
