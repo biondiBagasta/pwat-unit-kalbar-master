@@ -167,4 +167,23 @@ class PostController extends Controller
             return ApiResponse::errorResponse("Gagal Mengupdate Status Publish Postingan : {$e->getMessage()}");
         }
     }
+
+    public function countWaiting() {
+        if(Auth::user()->user_role->code == "ME") {
+            $count = Posts::where(function($q) {
+              $q->whereHas("member", function($p) {
+                $p->where("user_id", "=", Auth::user()->id);
+              })->whereHas("post_status", function($p) {
+                $p->where("code", "=", "WT");
+              });
+            })->count();
+
+            return $count;
+        } else {}
+        $count = Posts::whereHas("post_status", function($q) {
+            $q->where("code", "=", "WT");
+        })->count();
+
+        return $count;
+    }
 }

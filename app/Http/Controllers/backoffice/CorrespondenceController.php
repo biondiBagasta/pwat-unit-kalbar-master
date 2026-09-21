@@ -303,7 +303,8 @@ class CorrespondenceController extends Controller
         $data = Correspondences::with(
             'sender_data',
             'recepient_data',
-            'correspondence_category'
+            'correspondence_category',
+            'correspondence_attachments'
         )->findOrFail($id);
 
         $pdf = Pdf::loadView(
@@ -315,6 +316,6 @@ class CorrespondenceController extends Controller
 
         $pdf->setPaper('A4', 'portrait');
 
-        return $pdf->stream('surat-' . $data->id . '.pdf');
+        return $pdf->stream("{$data->correspondence_category->name}_{$data->recepient_data->full_name}.pdf");
     }
 }

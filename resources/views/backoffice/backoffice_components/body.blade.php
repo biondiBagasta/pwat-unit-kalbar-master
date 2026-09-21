@@ -153,8 +153,8 @@
 							<div class="app-container container-fluid d-flex flex-column flex-md-row flex-center flex-md-stack py-3">
 								<!--begin::Copyright-->
 								<div class="text-dark order-2 order-md-1">
-									<span class="text-muted fw-semibold me-1">2025 &copy;</span>
-									<a href="https://keenthemes.com" target="_blank" class="text-gray-800 text-hover-primary">Pemerintah Kota Mataram</a>
+									<span class="text-muted fw-semibold me-1">2026 &copy;</span>
+									<a href="https://keenthemes.com" target="_blank" class="text-gray-800 text-hover-primary">PWAT Unit Kalbar</a>
 								</div>
 								<!--end::Copyright-->
 							</div>
@@ -220,7 +220,6 @@
                         data.forEach(function (d, index) {
                             var url = "{{ route('correspondence.pdf', ":id") }}";
                             url = url.replace(':id', d.id);
-                            console.log(url)
                             historyElementData += `<a
                             href="${url}"
                             target="_blank"
@@ -259,9 +258,15 @@
 
                         $("#historySuratContainer").html(historyElementData)
                     }
-
-
                 });
+
+                // Bagian Count Post
+                $.get("{{ route('post.count-waiting') }}", function(data) {
+                    if(data > 0) {
+                        $("#badgeCountPost").removeClass("d-none");
+                        $("#badgeCountPost").text(data)
+                    }
+                })
             })
         </script>
 	</body>

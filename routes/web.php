@@ -21,6 +21,8 @@ use App\Http\Controllers\backoffice\UserController;
 use App\Http\Controllers\backoffice\UserRoleController;
 use App\Http\Middleware\BackofficePageMiddleware;
 use App\Http\Middleware\LoginPageMiddleware;
+use App\Http\Middleware\MemberNotAllowedMiddleware;
+use App\Http\Middleware\OnlySuperAdminAllowedMiddleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -55,7 +57,7 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::get("dashboard", [DashboardController::class, "index"])->name("dashboard.index");
 
     // Carousel Route
-    Route::get("carousel", [CarouselController::class, "index"])->name("carousel.index");
+    Route::get("carousel", [CarouselController::class, "index"])->name("carousel.index")->middleware(MemberNotAllowedMiddleware::class);
     Route::post("carousel/create", [CarouselController::class, "create"])->name("carousel.create");
     Route::put("carousel/update/{id}", [CarouselController::class, "update"])->name("carousel.update");
     Route::get("carousel/edit/{id}", [CarouselController::class, "edit"])->name("carousel.edit");
@@ -69,14 +71,14 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::delete("user-role/delete/{id}", [UserRoleController::class, "delete"])->name("user-role.delete");
 
     // User Route
-    Route::get("user", [UserController::class, "index"])->name("user.index");
+    Route::get("user", [UserController::class, "index"])->name("user.index")->middleware([MemberNotAllowedMiddleware::class, OnlySuperAdminAllowedMiddleware::class]);
     Route::post("user/create", [UserController::class, "create"])->name("user.create");
     Route::put("user/update/{id}", [UserController::class, "update"])->name("user.update");
     Route::get("user/edit/{id}", [UserController::class, "edit"])->name("user.edit");
     Route::delete("user/delete/{id}", [UserController::class, "delete"])->name("user.delete");
 
     // Member Route
-    Route::get("member", [MemberController::class, "index"])->name("member.index");
+    Route::get("member", [MemberController::class, "index"])->name("member.index")->middleware([MemberNotAllowedMiddleware::class,  OnlySuperAdminAllowedMiddleware::class]);
     Route::post("member/create", [MemberController::class, "create"])->name("member.create");
     Route::get("member/edit/{id}", [MemberController::class, "edit"])->name("member.edit");
     Route::put("member/update/{id}", [MemberController::class, "update"])->name("member.update");
@@ -124,6 +126,7 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::put("post/update-status/{id}", [PostController::class, "updateStatus"])->name("post.update-status");
     Route::get("post/edit/{id}", [PostController::class, "edit"])->name("post.edit");
     Route::delete("post/delete/{id}", [PostController::class, "delete"])->name("post.delete");
+    Route::get("post/count-waiting", [PostController::class, "countWaiting"])->name("post.count-waiting");
 
     // Event Category Route
     Route::post("event-category/create", [EventCategoryController::class, "create"])->name("event-category.create");
@@ -132,7 +135,7 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::delete("event-category/delete/{id}", [EventCategoryController::class, "delete"])->name("event-category.delete");
 
     // Event Route
-    Route::get("event", [EventController::class, "index"])->name("event.index");
+    Route::get("event", [EventController::class, "index"])->name("event.index")->middleware(MemberNotAllowedMiddleware::class);
     Route::post("event/create", [EventController::class, "create"])->name("event.create");
     Route::put("event/update/{id}", [EventController::class, "update"])->name("event.update");
     Route::get("event/edit/{id}", [EventController::class, "edit"])->name("event.edit");
@@ -148,7 +151,7 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::delete("finance-category/delete/{id}", [FinanceCategoryController::class, "delete"])->name("finance-category.delete");
 
     // Finance Route
-    Route::get("finance", [FinanceController::class, "index"])->name("finance.index");
+    Route::get("finance", [FinanceController::class, "index"])->name("finance.index")->middleware(MemberNotAllowedMiddleware::class);
     Route::post("finance/create", [FinanceController::class, "create"])->name("finance.create");
     Route::put("finance/update/{id}", [FinanceController::class, "update"])->name("finance.update");
     Route::get("finance/edit/{id}", [FinanceController::class, "edit"])->name("finance.edit");
@@ -166,7 +169,7 @@ Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware
     Route::delete("correspondence-category/delete/{id}", [CorrespondenceCategoryController::class, "delete"])->name("correspondence-category.delete");
 
     // Surat Menyurat
-    Route::get("correspondence", [CorrespondenceController::class, "index"])->name("correspondence.index");
+    Route::get("correspondence", [CorrespondenceController::class, "index"])->name("correspondence.index")->middleware(MemberNotAllowedMiddleware::class);
     Route::post("correspondence/create", [CorrespondenceController::class, "create"])->name("correspondence.create");
     Route::put("correspondence/update/{id}", [CorrespondenceController::class, "update"])->name("correspondence.update");
     Route::get("correspondence/edit/{id}", [CorrespondenceController::class, "edit"])->name("correspondence.edit");

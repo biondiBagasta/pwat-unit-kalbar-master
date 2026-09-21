@@ -101,36 +101,58 @@
         </div>
         <!--end::Col-->
     @endforeach
-    <ul class="pagination my-10">
-        <li class="{{ $current_page == 1 ? 'page-item previous disabled' :
-        'page-item previous' }}">
-            <a class="page-link page-text" href="{{
-            route("member-profile.suggestion", $member_id, [
-                    'page' => $current_page - 1
-                ])
-             }}">Previous</span></a>
-        </li>
-        @for ($i = 1; $i <= $total_page; $i++)
-            <li class="{{ $current_page == $i ? 'page-item active' : 'page-item'}}">
-                <a href="{{
-                    route("member-profile.suggestion", $member_id, [
-                        'page' => $i
-                    ])
-                }}" class="page-link">{{ $i }}</a>
-            </li>
-        @endfor
-        <li class="{{ $current_page == $total_page ? 'page-item previous disabled' :
-        'page-item previous' }}">
-            <a class="page-link page-text" href="{{
-                route("member-profile.suggestion", $member_id, [
-                    'page' => $current_page + 1
-                ])
-            }}">Next</span></a>
-        </li>
-    </ul>
-
-    <div style="height: 20vh"></div>
 </div>
+
+@if(count($data) > 0)
+<ul class="pagination my-10">
+    <li class="{{ $current_page == 1 ? 'page-item previous disabled' :
+    'page-item previous' }}">
+        <a class="page-link page-text" href="{{
+        route("member-profile.suggestion", $member_id, [
+                'page' => $current_page - 1
+            ])
+            }}">Previous</span></a>
+    </li>
+    @for ($i = 1; $i <= $total_page; $i++)
+        <li class="{{ $current_page == $i ? 'page-item active' : 'page-item'}}">
+            <a href="{{
+                route("member-profile.suggestion", $member_id, [
+                    'page' => $i
+                ])
+            }}" class="page-link">{{ $i }}</a>
+        </li>
+    @endfor
+    <li class="{{ $current_page == $total_page ? 'page-item previous disabled' :
+    'page-item previous' }}">
+        <a class="page-link page-text" href="{{
+            route("member-profile.suggestion", $member_id, [
+                'page' => $current_page + 1
+            ])
+        }}">Next</span></a>
+    </li>
+</ul>
+@endif
+
+@if(count($data) == 0)
+<div class="alert alert-primary d-flex align-items-center p-5">
+    <i class="las la-info-circle fs-2hx text-primary me-4">
+
+    </i>
+    <div class="d-flex flex-column">
+        <!--begin::Title-->
+        <h4 class="mb-1 text-dark">Perhatian</h4>
+        <!--end::Title-->
+
+        <!--begin::Content-->
+        <span>Belum Ada Data Saran.</span>
+        <!--end::Content-->
+    </div>
+    <!--end::Wrapper-->
+</div>
+<!--end::Alert-->
+@endif
+
+<div style="height: 20vh"></div>
 
 @include("backoffice.member_profile.tab_routes.suggestion.form")
 

@@ -24,13 +24,13 @@
                     <td>{{ $d->recepient_data->full_name }}</td>
                     <td>{{ $d->sender_data->full_name }}</td>
                     <td>
-                        <button type="button" class="btn btn-sm btn-light-primary detail-content"
-                        data-id="{{ $d->id }}">
+                        <a href="{{ route('correspondence.pdf', $d->id) }}" class="btn btn-sm btn-light-primary detail-content"
+                        >
                             <div class="d-flex flex-row gap-2">
                                 <i class="las la-eye fs-2"></i>
                                 <div>Lihat</div>
                             </div>
-                        </button>
+                        </a>
                     </td>
                     <td>
                         <div class="d-flex flex-column flex-md-row gap-2">

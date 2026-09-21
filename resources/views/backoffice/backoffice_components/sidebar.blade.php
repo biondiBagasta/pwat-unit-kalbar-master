@@ -49,6 +49,7 @@
                     <!--end:Menu link-->
                 </div>
 
+                @if(Auth::user()->user_role->code != "ME")
                 <div class="menu-item">
                     <!--begin:Menu link-->
                     <a class="
@@ -65,43 +66,46 @@
                     <!--end:Menu link-->
                 </div>
 
-                <div class="menu-item pt-5">
-                    <div class="menu-content">
-                        <span class="menu-heading fw-bold text-uppercase fs-7">Kelola Data User dan Member</span>
+                    @if(Auth::user()->user_role->code == "SA")
+                    <div class="menu-item pt-5">
+                        <div class="menu-content">
+                            <span class="menu-heading fw-bold text-uppercase fs-7">Kelola Data User dan Member</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="menu-item">
-                    <!--begin:Menu link-->
-                    <a class="
-                    {{ request()->route()->named('user.index') ?
-                    'menu-link active' : 'menu-link' }}"
-                    href="{{ route('user.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/abstract/abs014.svg-->
-                            <i class="las la-user fs-1 text-light"></i>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">User</span>
-                    </a>
-                    <!--end:Menu link-->
-                </div>
+                    <div class="menu-item">
+                        <!--begin:Menu link-->
+                        <a class="
+                        {{ request()->route()->named('user.index') ?
+                        'menu-link active' : 'menu-link' }}"
+                        href="{{ route('user.index') }}">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/abstract/abs014.svg-->
+                                <i class="las la-user fs-1 text-light"></i>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <span class="menu-title">User</span>
+                        </a>
+                        <!--end:Menu link-->
+                    </div>
 
-                <div class="menu-item">
-                    <!--begin:Menu link-->
-                    <a class="
-                    {{ request()->route()->named('member.index') ?
-                    'menu-link active' : 'menu-link' }}"
-                    href="{{ route('member.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/abstract/abs014.svg-->
-                            <i class="las la-users fs-1 text-light"></i>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">Member</span>
-                    </a>
-                    <!--end:Menu link-->
-                </div>
+                    <div class="menu-item">
+                        <!--begin:Menu link-->
+                        <a class="
+                        {{ request()->route()->named('member.index') ?
+                        'menu-link active' : 'menu-link' }}"
+                        href="{{ route('member.index') }}">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/abstract/abs014.svg-->
+                                <i class="las la-users fs-1 text-light"></i>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <span class="menu-title">Member</span>
+                        </a>
+                        <!--end:Menu link-->
+                    </div>
+                    @endif
+                @endif
 
                 <div class="menu-item pt-5">
                     <div class="menu-content">
@@ -121,6 +125,7 @@
                             <!--end::Svg Icon-->
                         </span>
                         <span class="menu-title">Post</span>
+                        <span class="d-none badge badge-danger" id="badgeCountPost"></span>
                     </a>
                     <!--end:Menu link-->
                 </div>
@@ -141,6 +146,7 @@
                     <!--end:Menu link-->
                 </div>
 
+                @if(Auth::user()->user_role->code != "ME")
                 <div class="menu-item">
                     <!--begin:Menu link-->
                     <a class="
@@ -200,6 +206,7 @@
                     </a>
                     <!--end:Menu link-->
                 </div>
+                @endif
 
             </div>
             <!--end::Menu-->
