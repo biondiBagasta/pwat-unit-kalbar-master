@@ -20,39 +20,81 @@ class SuggestionController extends Controller
 
         $currentPage = (int) ($request->query("page") ?? 1);
 
-        $count = Suggestions::where(
-        function ($q) use($term) {
-            $q->whereHas("member", function ($p0) use($term) {
-                $p0->where("full_name", "like", "%{$term}%");
-            })->orWhereHas("suggestion_category", function ($p1) use($term) {
-                $p1->where("name", "like", "%{$term}%");
-            });
-        })->count();
+        // Jika Bukan Merupakan Member
 
-        $totalPage = ceil(($count / $pageTake) + 0.4);
+        if(Auth::user()->user_role->code != "ME") {
+            $count = Suggestions::where(
+            function ($q) use($term) {
+                $q->whereHas("member", function ($p0) use($term) {
+                    $p0->where("full_name", "like", "%{$term}%");
+                })->orWhereHas("suggestion_category", function ($p1) use($term) {
+                    $p1->where("name", "like", "%{$term}%");
+                });
+            })->count();
 
-        $data = Suggestions::with("member", "suggestion_category")->where(
-        function ($q) use($term) {
-            $q->whereHas("member", function ($p0) use($term) {
-                $p0->where("full_name", "like", "%{$term}%");
-            })->orWhereHas("suggestion_category", function ($p1) use($term) {
-                $p1->where("name", "like", "%{$term}%");
-            });
-        })->take($pageTake)
-        ->skip(($currentPage - 1) * $pageTake)->get();
+            $totalPage = ceil(($count / $pageTake) + 0.4);
 
-        // Bagian Suggestion Category
-        $suggestion_categories_data = SuggestionCategories::orderBy("name", "asc")->get();
+            $data = Suggestions::with("member", "suggestion_category")->where(
+            function ($q) use($term) {
+                $q->whereHas("member", function ($p0) use($term) {
+                    $p0->where("full_name", "like", "%{$term}%");
+                })->orWhereHas("suggestion_category", function ($p1) use($term) {
+                    $p1->where("name", "like", "%{$term}%");
+                });
+            })->take($pageTake)
+            ->skip(($currentPage - 1) * $pageTake)->get();
 
-        return view("backoffice.suggestion.index",
-        [
-            "data" => $data,
-            "suggestion_categories_data" => $suggestion_categories_data,
-            "current_page" => $currentPage,
-            "count" => $count,
-            "total_page" => $totalPage,
-            "term" => $term
-        ]);
+            // Bagian Suggestion Category
+            $suggestion_categories_data = SuggestionCategories::orderBy("name", "asc")->get();
+
+            return view("backoffice.suggestion.index",
+            [
+                "data" => $data,
+                "suggestion_categories_data" => $suggestion_categories_data,
+                "current_page" => $currentPage,
+                "count" => $count,
+                "total_page" => $totalPage,
+                "term" => $term
+            ]);
+        } else {
+            $authenticatedMember = Auth::user()->member;
+
+            $count = Suggestions::
+            where("member_id", "=", $authenticatedMember->id)->
+            where(
+            function ($q) use($term) {
+                $q->whereHas("suggestion_category", function ($p1) use($term) {
+                    $p1->where("name", "like", "%{$term}%");
+                });
+            })->count();
+
+            $totalPage = ceil(($count / $pageTake) + 0.4);
+
+            $data = Suggestions::with("member", "suggestion_category")
+            ->where("member_id", "=", $authenticatedMember->id)
+            ->where(
+            function ($q) use($term) {
+                $q->whereHas("suggestion_category", function ($p1) use($term) {
+                    $p1->where("name", "like", "%{$term}%");
+                });
+            })->take($pageTake)
+            ->skip(($currentPage - 1) * $pageTake)->get();
+
+            // Bagian Suggestion Category
+            $suggestion_categories_data = SuggestionCategories::orderBy("name", "asc")->get();
+
+            return view("backoffice.suggestion.index",
+            [
+                "data" => $data,
+                "suggestion_categories_data" => $suggestion_categories_data,
+                "current_page" => $currentPage,
+                "count" => $count,
+                "total_page" => $totalPage,
+                "term" => $term
+            ]);
+        }
+
+
     }
 
     public function create(SuggestionRequest $request) {

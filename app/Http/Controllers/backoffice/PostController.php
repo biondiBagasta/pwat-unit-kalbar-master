@@ -21,45 +21,90 @@ class PostController extends Controller
 
         $currentPage = (int) ($request->query("page") ?? 1);
 
-        $count = Posts::where(
-        function ($q) use($term) {
-            $q->where("title", "like", "%{$term}%")
-            ->orWhere("hashtag", "like", "%{$term}%")
-            ->orWhereHas("post_category", function ($q2) use($term) {
-                $q2->where("name", "like", "%{$term}%");
-            })->orWhereHas("posted_by", function ($q2) use($term) {
-                $q2->where("full_name", "like", "%{$term}%");
-            });
-        })->count();
+        // Jika Bukan Merupakan Member
+        if(Auth::user()->user_role->code != 'ME') {
+            $count = Posts::where(
+            function ($q) use($term) {
+                $q->where("title", "like", "%{$term}%")
+                ->orWhere("hashtag", "like", "%{$term}%")
+                ->orWhereHas("post_category", function ($q2) use($term) {
+                    $q2->where("name", "like", "%{$term}%");
+                })->orWhereHas("posted_by", function ($q2) use($term) {
+                    $q2->where("full_name", "like", "%{$term}%");
+                });
+            })->count();
 
-        $totalPage = ceil(($count / $pageTake) + 0.4);
+            $totalPage = ceil(($count / $pageTake) + 0.4);
 
-        $data = Posts::with("post_category", "member")->where(
-        function ($q) use($term) {
-            $q->where("title", "like", "%{$term}%")
-            ->orWhere("hashtag", "like", "%{$term}%")
-            ->orWhereHas("post_category", function ($q2) use($term) {
-                $q2->where("name", "like", "%{$term}%");
-            })->orWhereHas("posted_by", function ($q2) use($term) {
-                $q2->where("full_name", "like", "%{$term}%");
-            });
-        })->take($pageTake)
-        ->skip(($currentPage - 1) * $pageTake)->get();
+            $data = Posts::with("post_category", "member")->where(
+            function ($q) use($term) {
+                $q->where("title", "like", "%{$term}%")
+                ->orWhere("hashtag", "like", "%{$term}%")
+                ->orWhereHas("post_category", function ($q2) use($term) {
+                    $q2->where("name", "like", "%{$term}%");
+                })->orWhereHas("posted_by", function ($q2) use($term) {
+                    $q2->where("full_name", "like", "%{$term}%");
+                });
+            })->take($pageTake)
+            ->skip(($currentPage - 1) * $pageTake)->get();
 
-        $post_categories_data = PostCategories::orderBy("name", "asc")->get();
-        $post_statuses_data = PostStatuses::where("code", "!=", "WT")->orderBy("code", "asc")->get();
+            $post_categories_data = PostCategories::orderBy("name", "asc")->get();
+            $post_statuses_data = PostStatuses::where("code", "!=", "WT")->orderBy("code", "asc")->get();
 
 
-        return view("backoffice.post.index",
-        [
-            "data" => $data,
-            "post_categories_data" => $post_categories_data,
-            "current_page" => $currentPage,
-            "count" => $count,
-            "total_page" => $totalPage,
-            "post_statuses_data" => $post_statuses_data,
-            "term" => $term
-        ]);
+            return view("backoffice.post.index",
+            [
+                "data" => $data,
+                "post_categories_data" => $post_categories_data,
+                "current_page" => $currentPage,
+                "count" => $count,
+                "total_page" => $totalPage,
+                "post_statuses_data" => $post_statuses_data,
+                "term" => $term
+            ]);
+        } else {
+            $authenticatedMember = Auth::user()->member;
+
+            $count = Posts::
+            where("posted_by", "=", $authenticatedMember->id)
+            ->where(
+            function ($q) use($term) {
+                $q->where("title", "like", "%{$term}%")
+                ->orWhere("hashtag", "like", "%{$term}%")
+                ->orWhereHas("post_category", function ($q2) use($term) {
+                    $q2->where("name", "like", "%{$term}%");
+                });
+            })->count();
+
+            $totalPage = ceil(($count / $pageTake) + 0.4);
+
+            $data = Posts::with("post_category", "member")
+            ->where("posted_by", "=", $authenticatedMember->id)
+            ->where(
+            function ($q) use($term) {
+                $q->where("title", "like", "%{$term}%")
+                ->orWhere("hashtag", "like", "%{$term}%")
+                ->orWhereHas("post_category", function ($q2) use($term) {
+                    $q2->where("name", "like", "%{$term}%");
+                });
+            })->take($pageTake)
+            ->skip(($currentPage - 1) * $pageTake)->get();
+
+            $post_categories_data = PostCategories::orderBy("name", "asc")->get();
+            $post_statuses_data = PostStatuses::where("code", "!=", "WT")->orderBy("code", "asc")->get();
+
+
+            return view("backoffice.post.index",
+            [
+                "data" => $data,
+                "post_categories_data" => $post_categories_data,
+                "current_page" => $currentPage,
+                "count" => $count,
+                "total_page" => $totalPage,
+                "post_statuses_data" => $post_statuses_data,
+                "term" => $term
+            ]);
+        }
     }
 
     public function create(PostRequest $request) {

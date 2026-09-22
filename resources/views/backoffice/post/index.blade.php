@@ -42,12 +42,17 @@ Post
 @endif
 
 <div class="row">
-    <div class="col-12 col-md-8">
+    <div class="{{ Auth::user()->user_role->code == 'ME' ? 'col-12' : 'col-12 col-md-8' }}">
         <div class="card">
             <div class="card-body p-lg-10" id="cardBody">
                 <h2 class="card-title mb-5">Data Post</h2>
 
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                    <button type="button" class="btn btn-primary" id="createButton">
+                        <i class="las la-plus-circle fs-2 me-1"></i>
+                        Tambah Data
+                    </button>
+
                     <div class="d-flex flex-column flex-md-row align-items-center gap-2">
                         <div class="form-group mt-5">
                             <div class="input-group mb-5">
@@ -67,14 +72,18 @@ Post
         </div>
     </div>
 
+    @if(Auth::user()->user_role->code != "ME")
     <div class="col-12 col-md-4">
         @include("backoffice.post.post_category.index")
     </div>
+    @endif
 </div>
 
 @include("backoffice.post.content_detail")
 
 @include("backoffice.post.update_status_form")
+
+@include("backoffice.post.form")
 
 @endsection
 
@@ -122,6 +131,160 @@ Post
 
             const newUrl = `${window.location.pathname}?term=${term}&page=1`;
             window.location.href = newUrl;
+        });
+
+        // Quill Section
+        var contentQuill = new Quill('#content', {
+            modules: {
+                toolbar: [
+                    [{
+                        header: [1, 2, false]
+                    }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'code-block'],
+                    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }]
+                ]
+            },
+            placeholder: 'Type your text here...',
+            theme: 'snow' // or 'bubble'
+        });
+
+        $('#createButton').click(function () {
+            $('#saveBtn').show();
+            $('#editBtn').hide();
+            $('#id').val('');
+            $('#modalForm').trigger('reset');
+            $('#modalTitle').html('Buat Postingan');
+            $('#actionModal').modal('show');
+        });
+
+        $('#saveBtn').click(function (e) {
+            e.preventDefault();
+
+            const title = $("#title").val();
+            const content = contentQuill.root.innerHTML;
+            const hashtag = $("#hashtag").val()
+            const post_category_id = $("#post_category_id").val()
+            const cover_image = $("#cover_image")[0].files[0];
+
+            if(title && content && hashtag && post_category_id
+            ) {
+                blockUI.block();
+                const formData = new FormData();
+
+                if(cover_image) {
+                    formData.append("cover_image", cover_image)
+                }
+
+                formData.append("title", title)
+                formData.append("content", content)
+                formData.append("hashtag", hashtag)
+                formData.append("post_category_id", post_category_id)
+
+                $.ajax({
+                    data: formData,
+                    url: "{{ route('post.create') }}",
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if(data.success == true) {
+                            location.reload();
+                        } else {
+                            blockUI.release();
+
+                            toastr.error(data.message);
+                        }
+                        // $('#modalForm').trigger('reset');
+                        // $('#actionModal').modal('hide');
+                        // toastr.success(data.create);
+                        // blockUI.release();
+                        // location.reload();
+                    },
+                    error: function(data) {
+                        console.log('Error : ', data);
+                        blockUI.release();
+                    }
+                })
+            } else {
+                toastr.error("Semua field harus diisi terlebih dahulu sebelum membuat data.")
+            }
+
+        });
+
+        // Edit Update LOGIC
+        $('body').on('click', '.edit', function() {
+            var id = $(this).data('id');
+            var url = "{{ route('post.edit', ":id") }}";
+            url = url.replace(':id', id);
+
+            $.get(url, function(data) {
+                $('#modalTitle').html('Edit Data Post');
+                $('#saveBtn').hide();
+                $('#editBtn').show();
+                $('#actionModal').modal('show');
+                $('#id').val(data.id);
+                $("#title").val(data.title);
+                $("#hashtag").val(data.hashtag);
+                $("#post_category_id").val(data.post_category_id);
+                contentQuill.root.innerHTML = data.content
+            })
+        });
+
+        $('#editBtn').click(function (e) {
+            e.preventDefault();
+
+            const title = $("#title").val();
+            const content = contentQuill.root.innerHTML;
+            const hashtag = $("#hashtag").val()
+            const post_category_id = $("#post_category_id").val()
+            const cover_image = $("#cover_image")[0].files[0];
+
+            if(title && content && hashtag && post_category_id
+            ) {
+                var id = $('#id').val();
+                var url = "{{ route('post.update', ":id") }}";
+                url = url.replace(':id', id);
+                blockUI.block();
+                const formData = new FormData();
+
+                if(cover_image) {
+                    formData.append("cover_image", cover_image)
+                }
+
+                formData.append("title", title)
+                formData.append("content", content)
+                formData.append("hashtag", hashtag)
+                formData.append("post_category_id", post_category_id)
+                formData.append('_method', 'PUT');
+
+                blockUI.block();
+
+                $.ajax({
+                    data: formData,
+                    url: url,
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: "json",
+                    success: function(data) {
+                        if(data.success == true) {
+                            location.reload();
+                        } else {
+                            blockUI.release();
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function(data) {
+                        console.log('Error : ', data);
+                        blockUI.release();
+                    }
+                })
+            } else {
+                toastr.error("Semua field harus diisi terlebih dahulu sebelum mengupdate data.");
+            }
         });
 
         // DELETE METHOD

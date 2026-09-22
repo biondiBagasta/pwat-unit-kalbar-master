@@ -42,12 +42,18 @@ Saran
 @endif
 
 <div class="row">
-    <div class="col-12 col-md-8">
+    <div class="{{ Auth::user()->user_role->code == 'ME' ?
+        'col-12' : 'col-12 col-md-8'}}">
         <div class="card">
             <div class="card-body p-lg-10" id="cardBody">
                 <h2 class="card-title mb-5">Data Saran</h2>
 
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+
+                    <button type="button" class="btn btn-primary" id="createButton">
+                        <i class="las la-plus-circle fs-2 me-1"></i>
+                        Tambah Data
+                    </button>
 
                     <div class="d-flex flex-column flex-md-row align-items-center gap-2">
                         <div class="form-group mt-5">
@@ -68,10 +74,14 @@ Saran
         </div>
     </div>
 
+    @if(Auth::user()->user_role->code != "ME")
     <div class="col-12 col-md-4">
         @include("backoffice.suggestion.suggestion_category.index")
     </div>
+    @endif
 </div>
+
+@include("backoffice.suggestion.form")
 
 @include("backoffice.suggestion.content_detail")
 
@@ -128,6 +138,155 @@ Saran
             window.location.href = newUrl;
         });
 
+        // Quill Section
+        var contentQuill = new Quill('#content', {
+            modules: {
+                toolbar: [
+                    [{
+                        header: [1, 2, false]
+                    }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'code-block'],
+                    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }]
+                ]
+            },
+            placeholder: 'Type your text here...',
+            theme: 'snow' // or 'bubble'
+        });
+
+        $('#createButton').click(function () {
+            $('#saveBtn').show();
+            $('#editBtn').hide();
+            $('#id').val('');
+            $('#modalForm').trigger('reset');
+            $('#modalTitle').html('Ajukan Saran');
+            $('#actionModal').modal('show');
+        });
+
+        $('#saveBtn').click(function (e) {
+            e.preventDefault();
+
+            const title = $("#title").val();
+            const content = contentQuill.root.innerHTML;
+            const suggestion_category_id = $("#suggestion_category_id").val()
+            const cover_image = $("#cover_image")[0].files[0];
+
+            if(title && content && suggestion_category_id
+            ) {
+                blockUI.block();
+                const formData = new FormData();
+
+                if(cover_image) {
+                    formData.append("cover_image", cover_image)
+                }
+
+                formData.append("title", title)
+                formData.append("content", content)
+                formData.append("suggestion_category_id", suggestion_category_id)
+
+                $.ajax({
+                    data: formData,
+                    url: "{{ route('suggestion.create') }}",
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if(data.success == true) {
+                            location.reload();
+                        } else {
+                            blockUI.release();
+
+                            toastr.error(data.message);
+                        }
+                        // $('#modalForm').trigger('reset');
+                        // $('#actionModal').modal('hide');
+                        // toastr.success(data.create);
+                        // blockUI.release();
+                        // location.reload();
+                    },
+                    error: function(data) {
+                        console.log('Error : ', data);
+                        blockUI.release();
+                    }
+                })
+            } else {
+                toastr.error("Semua field harus diisi terlebih dahulu sebelum membuat data.")
+            }
+
+        });
+
+        // Edit Update LOGIC
+        $('body').on('click', '.edit', function() {
+            var id = $(this).data('id');
+            var url = "{{ route('suggestion.edit', ":id") }}";
+            url = url.replace(':id', id);
+
+            $.get(url, function(data) {
+                $('#modalTitle').html('Edit Data Saran');
+                $('#saveBtn').hide();
+                $('#editBtn').show();
+                $('#actionModal').modal('show');
+                $('#id').val(data.id);
+                $("#title").val(data.title);
+                $("#suggestion_category_id").val(data.suggestion_category_id);
+                contentQuill.root.innerHTML = data.content
+            })
+        });
+
+        $('#editBtn').click(function (e) {
+            e.preventDefault();
+
+            const title = $("#title").val();
+            const content = contentQuill.root.innerHTML;
+            const suggestion_category_id = $("#suggestion_category_id").val()
+            const cover_image = $("#cover_image")[0].files[0];
+
+            if(title && content && suggestion_category_id
+            ) {
+                var id = $('#id').val();
+                var url = "{{ route('suggestion.update', ":id") }}";
+                url = url.replace(':id', id);
+                blockUI.block();
+                const formData = new FormData();
+
+                if(cover_image) {
+                    formData.append("cover_image", cover_image)
+                }
+
+                formData.append("title", title)
+                formData.append("content", content)
+                formData.append("suggestion_category_id", suggestion_category_id)
+                formData.append('_method', 'PUT');
+
+                blockUI.block();
+
+                $.ajax({
+                    data: formData,
+                    url: url,
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: "json",
+                    success: function(data) {
+                        if(data.success == true) {
+                            location.reload();
+                        } else {
+                            blockUI.release();
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function(data) {
+                        console.log('Error : ', data);
+                        blockUI.release();
+                    }
+                })
+            } else {
+                toastr.error("Semua field harus diisi terlebih dahulu sebelum mengupdate data.");
+            }
+        });
+
         // DELETE METHOD
         $('body').on('click', '.delete', function() {
             var id = $(this).data('id');
@@ -173,9 +332,9 @@ Saran
                 $('#detailContentModal').modal('show');
 
                 if(data.cover_image == null) {
-                    $("#detailCoverImage").attr("src", "{{ url('/storage/posts/cover-default.jpg') }}");
+                    $("#detailCoverImage").attr("src", "{{ url('/storage/suggestions/suggestion-default.jpg') }}");
                 } else {
-                    var url = "{{ url('/storage/posts/:image') }}";
+                    var url = "{{ url('/storage/suggestions/:image') }}";
                     url = url.replace(':image', data.cover_image);
 
                     $("#detailCoverImage").attr("src", url);

@@ -27,10 +27,28 @@
                     </td>
                     <td>{{ \Carbon\Carbon::parse($d->created_at)->format('d F Y') }}</td>
                     <td>
-                        <button data-toggle="tooltip"  data-id="{{ $d->id }}"
-                        title="Delete" class="btn btn-icon btn-danger btn-sm delete">
-                            <i class="las la-trash fs-4"></i>
-                        </button>
+                        <div class="d-flex flex-column flex-md-row gap-2">
+                            @if(Auth::user()->member->id == $d->member_id)
+                            <button data-toggle="tooltip" data-id="{{ $d->id }}"
+                            title="Edit" class="edit btn btn-icon btn-info btn-sm me-1">
+                                <i class="las la-edit fs-4"></i>
+                            </button>
+                            @endif
+
+                            @if(Auth::user()->user_role->code != "ME")
+                            <button data-toggle="tooltip"  data-id="{{ $d->id }}"
+                            title="Delete" class="btn btn-icon btn-danger btn-sm delete">
+                                <i class="las la-trash fs-4"></i>
+                            </button>
+                            @else
+                                @if(Auth::user()->member->id == $d->member_id)
+                                <button data-toggle="tooltip"  data-id="{{ $d->id }}"
+                                title="Delete" class="btn btn-icon btn-danger btn-sm delete">
+                                    <i class="las la-trash fs-4"></i>
+                                </button>
+                                @endif
+                            @endif
+                        </div>
                     </td>
                 </tr>
             @endforeach

@@ -48,11 +48,23 @@
                     </td>
                     <td width="180px">
                         <div class="d-flex flex-column gap-2">
-                            <button type="button" class="btn btn-info btn-sm update-status"
+                            @if(Auth::user()->user_role->code != "ME")
+                            <button type="button" class="btn btn-dark btn-sm update-status"
                             data-id="{{ $d->id }}">
-                                <i class="las la-edit fs-2 me-1"></i>
+                                <i class="las la-rss fs-2 me-1"></i>
                                 Update Status
                             </button>
+                            @endif
+
+                            @if(Auth::user()->member->exists())
+                                @if(Auth::user()->member->id == $d->posted_by)
+                                <button type="button" class="btn btn-info btn-sm edit"
+                                data-id="{{ $d->id }}">
+                                    <i class="las la-edit fs-2 me-1"></i>
+                                    Edit
+                                </button>
+                                @endif
+                            @endif
 
                             <button data-toggle="tooltip" data-id="{{ $d->id }}"
                             title="Delete" class="btn btn-danger btn-sm delete">
