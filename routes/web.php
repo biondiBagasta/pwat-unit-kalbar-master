@@ -54,7 +54,9 @@ Route::get("storage/{folder}/{filename}", function($folder, $filename) {
 });
 
 Route::group(["prefix" => "backoffice", "middleware" => BackofficePageMiddleware::class], function() {
+    // Dashboard Route
     Route::get("dashboard", [DashboardController::class, "index"])->name("dashboard.index");
+    Route::post("get-finance-chart", [DashboardController::class, "getFinanceChart"])->name("dashboard.finance-chart");
 
     // Carousel Route
     Route::get("carousel", [CarouselController::class, "index"])->name("carousel.index")->middleware(MemberNotAllowedMiddleware::class);
