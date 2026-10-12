@@ -15,8 +15,8 @@ class DashboardController extends Controller
     }
 
     public function getFinanceChart(Request $request) {
-        $startDate = $request["start_date"] ?? Carbon::now()->startOfMonth();
-        $endDate = $request["end_date"] ?? Carbon::now()->endOfDay();
+        $startDate = $request["start_date"] ? Carbon::parse($request["start_date"]) : Carbon::now()->startOfMonth();
+        $endDate = $request["end_date"] ? Carbon::parse($request["end_date"]) : Carbon::now()->endOfDay();
 
         $financeData = Finances::join(
             'finance_categories',

@@ -96,6 +96,8 @@ Dashboard
                     // Format to your desired string (already formatted by dateFormat)
                     let start = instance.formatDate(startDate, "Y-m-d");
                     let end   = instance.formatDate(endDate, "Y-m-d");
+
+                    getFinanceChart(start, end)
                 }
             }
         });
@@ -135,8 +137,6 @@ Dashboard
                 },
                 type: "POST",
                 cache: false,
-                contentType: false,
-                processData: false,
                 success: function(data) {
                     const mappedCategories = data.categories.map(function(d, index) {
                         return formatDateMD(d)
